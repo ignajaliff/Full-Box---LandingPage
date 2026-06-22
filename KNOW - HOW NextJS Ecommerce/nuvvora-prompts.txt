@@ -1,0 +1,190 @@
+# Nuvvora Prompts — Flujo de desarrollo (Next.js E-commerce)
+
+Prompts base para cada etapa. Reemplazar los valores entre [corchetes] antes de usar.
+
+---
+
+## 1. INICIO DE PROYECTO
+
+Usar una sola vez al arrancar.
+
+```
+Vamos a desarrollar un ecommerce a medida para [NOMBRE DEL CLIENTE].
+
+Antes de escribir cualquier código, lee y respeta estrictamente estos documentos:
+@CLAUDE.md
+@ai-pmp/rules.txt
+@ai-pmp/frontend-rules.txt
+@ai-pmp/supabase-rules.txt
+@ai-pmp/ecommerce-rules.txt
+@ai-pmp/error-handling.txt
+@ai-pmp/naming-rules.txt
+
+Tu única tarea en esta sesión:
+1. Crear el proyecto Next.js 16 (App Router, TypeScript strict, Turbopack) con la
+   estructura de carpetas de rules.txt (app/ con grupos (shop) y (admin), features/,
+   shared/, lib/, data/, integrations/)
+2. Configurar Tailwind v4 + shadcn/ui y el QueryClient provider (Client) en el layout
+3. Crear los tres clientes de Supabase (browser, server, proxy) según supabase-rules.txt
+   y el proxy.ts de refresco de sesión
+4. Crear la página de login (/auth/login) con email y contraseña usando shadcn/ui y
+   React Hook Form + Zod
+5. Crear el helper del DAL requireRol() y un layout (admin) protegido
+
+Restricciones:
+- NO conectar todavía la auth con Supabase real (solo el andamiaje)
+- NO crear módulos de catálogo ni checkout
+- NO instalar dependencias fuera del stack de rules.txt
+- Al terminar, listar exactamente qué archivos creaste
+```
+
+---
+
+## 2. CONECTAR AUTH CON SUPABASE
+
+Cuando el proyecto ya existe en Supabase y el MCP está conectado.
+
+```
+Ahora conectamos la auth con Supabase. El MCP está conectado.
+
+Tareas:
+1. Conectar el login con Supabase auth (cookies vía @supabase/ssr)
+2. Crear la tabla user_roles con su RLS propio (nadie modifica su rol desde el
+   cliente), la función tiene_rol() y el trigger handle_new_user (rol por defecto:
+   cliente) — todo según supabase-rules.txt
+3. Implementar requireRol() en el DAL usando getUser() (NUNCA getSession())
+4. Redirigir al área correspondiente tras login
+5. Manejar credenciales incorrectas con toast destructive
+6. Al terminar, correr get_advisors del MCP y corregir alertas
+
+No expliques, ejecutá directamente.
+```
+
+---
+
+## 3. MÓDULO CATÁLOGO
+
+```
+Vamos a desarrollar el catálogo de productos.
+
+Antes de empezar respeta:
+@CLAUDE.md
+@ai-pmp/rules.txt
+@ai-pmp/frontend-rules.txt
+@ai-pmp/supabase-rules.txt
+@ai-pmp/ecommerce-rules.txt
+@ai-pmp/error-handling.txt
+@ai-pmp/naming-rules.txt
+
+Frontend:
+- /productos: listado (Server Component) con cards de producto desde la tabla productos,
+  filtros por categoría. Imágenes con next/image.
+- /productos/[slug]: detalle (Server Component) con ISR, generateStaticParams,
+  generateMetadata y JSON-LD. Una isla Client <AgregarAlCarritoButton />.
+
+Backend:
+- Tabla "productos": slug (unique), nombre, descripcion, precio (numeric(12,2)),
+  stock (int check >= 0), activo (bool), imagen_url
+- Tabla "categorias": slug, nombre
+- Tabla puente "producto_categoria"
+
+Restricciones:
+- SELECT público (activo = true); escritura solo admin (WITH CHECK + tiene_rol)
+- NO crear tablas adicionales
+- NO avanzar a carrito/checkout
+- Al terminar, correr get_advisors del MCP y corregir alertas
+- Al terminar, listar qué archivos creaste o modificaste
+```
+
+---
+
+## 4. MÓDULO CARRITO
+
+```
+Vamos a desarrollar el carrito (estado de cliente, sin pago todavía).
+
+Respeta los documentos de siempre (@CLAUDE.md + ai-pmp/*).
+
+Frontend:
+- Carrito como estado de cliente (Zustand o React Query con persistencia en localStorage)
+- Botón "Agregar al carrito" en el detalle de producto
+- Página /carrito: editar cantidades, eliminar ítems, ver total REFERENCIAL
+- El carrito guarda producto_id y cantidad; el precio mostrado es solo UX
+
+Restricciones:
+- NO crear el checkout ni tocar Mercado Pago todavía
+- NO calcular el total final acá (eso es server, en el checkout)
+- Al terminar, listar qué archivos creaste o modificaste
+```
+
+---
+
+## 5. MÓDULO CHECKOUT + MERCADO PAGO
+
+```
+Vamos a desarrollar el checkout con Mercado Pago.
+
+Antes de empezar respeta:
+@CLAUDE.md
+@ai-pmp/rules.txt
+@ai-pmp/ecommerce-rules.txt
+@ai-pmp/payments-rules.txt
+@ai-pmp/supabase-rules.txt
+@ai-pmp/error-handling.txt
+@ai-pmp/naming-rules.txt
+
+Backend:
+- Tabla "ordenes": numero_orden (GENERATED ALWAYS AS IDENTITY), user_id, estado
+  (check pendiente/pagada/enviada/cancelada), total (numeric(12,2)), metodo_pago,
+  pago_id
+- Tabla "items_orden": orden_id (FK), producto_id (FK), cantidad (check > 0),
+  precio_unitario (numeric(12,2)) congelado
+- Función SQL atómica para descontar stock (UPDATE ... WHERE stock >= cantidad)
+
+Flujo (todo en el server, según payments-rules.txt):
+1. Server Action recibe solo [{producto_id, cantidad}], lee precios/stock de la base,
+   valida stock, calcula el total en el server, crea la orden pendiente + items_orden
+2. Crea la preferencia de Mercado Pago con external_reference = orden.id y devuelve init_point
+3. Route Handler /api/webhooks/mercadopago: valida x-signature (HMAC-SHA256,
+   timingSafeEqual), re-consulta el pago a la API, procesa el estado de forma idempotente,
+   descuenta stock solo en approved
+4. Páginas /checkout/exito|error|pendiente (solo UX, no marcan pagada)
+
+Restricciones:
+- El total y el stock se manejan SOLO en el server
+- Access token y webhook secret SIN prefijo NEXT_PUBLIC_
+- La back_url NUNCA marca la orden como pagada
+- RLS: el cliente ve solo sus órdenes; las transiciones de estado van por service key
+- Al terminar, correr get_advisors del MCP y corregir alertas
+- Al terminar, listar qué archivos creaste o modificaste
+```
+
+---
+
+## 6. MÓDULO GENÉRICO (panel admin u otro)
+
+```
+Vamos a desarrollar la página "[NOMBRE]".
+Estará en el navegador [debajo de / junto a] "[PÁGINA REFERENCIA]".
+
+Antes de empezar respeta:
+@CLAUDE.md
+@ai-pmp/rules.txt
+@ai-pmp/frontend-rules.txt
+@ai-pmp/supabase-rules.txt
+@ai-pmp/error-handling.txt
+@ai-pmp/naming-rules.txt
+
+Frontend: [qué ve y hace el usuario; marcar qué es Server y qué isla Client]
+
+Backend: [tablas necesarias con sus campos]
+
+Restricciones:
+- Lecturas vía DAL en Server Components; mutaciones vía Server Actions
+- React Query solo si hay interactividad cliente
+- NO crear tablas adicionales a las mencionadas
+- NO avanzar a otro módulo
+- RLS con WITH CHECK en escritura usando tiene_rol; autorización en el DAL con getUser()
+- Al terminar, correr get_advisors del MCP y corregir alertas
+- Al terminar, listar qué archivos creaste o modificaste
+```

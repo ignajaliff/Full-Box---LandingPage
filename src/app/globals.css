@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Paleta neutra por defecto (base-color: neutral) — fase de estructura/wireframing.
+ * La estética del cliente se inyecta luego editando estas variables (design-system.md).
+ * Prohibido color hardcoded en componentes: usar tokens semánticos.
+ */
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #405050; /* color de marca Full Box (extraído del logo) */
+  --primary-foreground: oklch(0.985 0 0);
+  /* Azul de acento Full Box — cobalto industrial que combina con el teal de marca. */
+  --brand-blue: #1f6feb;
+  --brand-blue-foreground: oklch(0.985 0 0);
+  --brand-blue-soft: oklch(0.96 0.025 255); /* tinte muy claro para fondos/badges */
+  /* Color cartón (de la caja) para detalles. */
+  --cardboard: #c79a5b;
+  --cardboard-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: var(--brand-blue);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #5c7a7a; /* marca Full Box, aclarada para contraste en dark */
+  --primary-foreground: oklch(0.145 0 0);
+  --brand-blue: #4d94ff; /* azul aclarado para contraste en dark */
+  --brand-blue-foreground: oklch(0.145 0 0);
+  --brand-blue-soft: oklch(0.28 0.06 255);
+  --cardboard: #c79a5b;
+  --cardboard-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-foreground: var(--brand-blue-foreground);
+  --color-brand-blue-soft: var(--brand-blue-soft);
+  --color-cardboard: var(--cardboard);
+  --color-cardboard-foreground: var(--cardboard-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-bricolage), var(--font-geist-sans);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Textura de grilla sutil para fondos de sección (estética industrial). */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Manchas de gradiente teal→azul que dan atmósfera y profundidad. */
+@keyframes blob-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -24px, 0) scale(1.06); }
+}
+.blob {
+  animation: blob-float 14s ease-in-out infinite;
+  filter: blur(64px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .blob { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+ * Caja de cartón que se arma sola (Hero). CSS 3D puro.
+ * El net plano (frente + paredes + tapa trasera) se pliega con --fold: 0°→90°.
+ * Colores kraft locales (ilustración decorativa, no superficie de UI).
+ * ------------------------------------------------------------------------- */
+@property --fold {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+.box-scene {
+  /* Escala según el ancho de la columna (no del viewport): así el net
+   * desplegado entra completo tanto en mobile (1 col) como en desktop (2 cols). */
+  container-type: inline-size;
+  /* Caja rectangular: frente W×H, profundidad D (derivadas de W). */
+  --w: clamp(112px, 32cqw, 230px);
+  --h: calc(var(--w) * 0.72);
+  --d: calc(var(--w) * 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 230px;
+  perspective: 1300px;
+}
+
+@media (min-width: 768px) {
+  .box-scene { min-height: 360px; }
+}
+
+.box-3d {
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  transform-style: preserve-3d;
+  animation:
+    box-sway 12s ease-in-out infinite,
+    box-fold 7s ease-in-out infinite;
+}
+
+/* Vaivén suave 3/4 para dar vida sin que el net plano se salga del marco. */
+@keyframes box-sway {
+  0%, 100% { transform: rotateX(-16deg) rotateY(-34deg); }
+  50%      { transform: rotateX(-11deg) rotateY(-16deg); }
+}
+
+/* Plegado: plano (0°) → armado (90°) → se mantiene → vuelve a plano. */
+@keyframes box-fold {
+  0%, 10%   { --fold: 0deg; }
+  40%, 62%  { --fold: 90deg; }
+  92%, 100% { --fold: 0deg; }
+}
+
+.panel {
+  --kraft: #cba368;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  background-color: var(--kraft);
+  border: 1px solid rgba(74, 48, 18, 0.4);
+}
+
+/* Costura central de las solapas (lee como caja real). */
+.face-top::after,
+.face-bottom::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 1px dashed rgba(74, 48, 18, 0.3);
+  top: 50%;
+}
+
+/* Dimensiones por cara: frente/atrás W×H, tapa/base W×D, laterales D×H. */
+.face-front  { --kraft: #d8b277; width: var(--w); height: var(--h); }
+.face-top    { --kraft: #e3c089; width: var(--w); height: var(--d); top: calc(-1 * var(--d)); transform-origin: 50% 100%; transform: rotateX(var(--fold)); }
+.face-bottom { --kraft: #b88c4f; width: var(--w); height: var(--d); top: 100%; transform-origin: 50% 0; transform: rotateX(calc(-1 * var(--fold))); }
+.face-left   { --kraft: #c39a5d; width: var(--d); height: var(--h); left: calc(-1 * var(--d)); transform-origin: 100% 50%; transform: rotateY(calc(-1 * var(--fold))); }
+.face-right  { --kraft: #c39a5d; width: var(--d); height: var(--h); left: 100%; transform-origin: 0 50%; transform: rotateY(var(--fold)); transform-style: preserve-3d; }
+.face-back   { --kraft: #b88c4f; width: var(--w); height: var(--h); left: 100%; transform-origin: 0 50%; transform: rotateY(var(--fold)); }
+
+/* Logo Full Box impreso en la cara frontal. */
+.box-logo {
+  position: absolute;
+  inset: 16% 12%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box-3d {
+    animation: none;
+    --fold: 90deg;
+    transform: rotateX(-15deg) rotateY(-30deg);
+  }
+}
