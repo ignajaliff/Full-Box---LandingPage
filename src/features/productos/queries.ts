@@ -3,34 +3,36 @@ import { type Producto } from "./types"
 
 /**
  * DAL del catálogo (lecturas server). Se llama desde Server Components.
- * El RLS de Supabase respalda estas queries (catálogo público de solo lectura).
+ * El RLS de Supabase respalda estas queries: la política pública solo
+ * expone las filas con `activo = true`.
  */
 
-/** Productos activos, ordenados por fecha de alta. */
+/** Productos activos, ordenados por nombre. */
 export async function getProductos(): Promise<Producto[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("productos")
     .select("*")
     .eq("activo", true)
-    .order("created_at", { ascending: false })
+    .order("nombre", { ascending: true })
 
   if (error) throw error
-  return data
+  return data ?? []
 }
 
 /** Productos destacados para la home. */
-export async function getProductosDestacados(): Promise<Producto[]> {
+export async function getProductosDestacados(limit = 4): Promise<Producto[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("productos")
     .select("*")
     .eq("activo", true)
     .eq("destacado", true)
-    .order("created_at", { ascending: false })
+    .order("nombre", { ascending: true })
+    .limit(limit)
 
   if (error) throw error
-  return data
+  return data ?? []
 }
 
 /** Detalle por slug. Devuelve null si no existe (la página decide el notFound()). */

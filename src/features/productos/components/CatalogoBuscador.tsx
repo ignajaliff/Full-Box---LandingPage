@@ -5,15 +5,15 @@ import { Ruler, Search, X } from "lucide-react"
 
 import { Button } from "@/shared/components/ui/button"
 import { ProductoCard } from "./ProductoCard"
-import { type ProductoDemo } from "../data/demo"
+import { tieneMedidas, type Producto } from "../types"
 
 /** Tolerancia en cm: una medida ingresada matchea productos a ±TOLERANCIA. */
 const TOLERANCIA = 5
 
 const inputClass =
-  "h-11 w-full rounded-md border bg-background px-3 text-sm outline-none transition-colors focus-visible:border-brand-blue focus-visible:ring-[3px] focus-visible:ring-brand-blue/30"
+  "h-11 w-full rounded-md border bg-background px-3 text-sm outline-none transition-colors focus-visible:border-foreground/40 focus-visible:ring-[3px] focus-visible:ring-foreground/10"
 
-type Props = { productos: ProductoDemo[] }
+type Props = { productos: Producto[] }
 
 export function CatalogoBuscador({ productos }: Props) {
   const [texto, setTexto] = useState("")
@@ -21,19 +21,25 @@ export function CatalogoBuscador({ productos }: Props) {
   const [ancho, setAncho] = useState("")
   const [alto, setAlto] = useState("")
 
-  const hayFiltros = Boolean(texto || largo || ancho || alto)
+  const hayMedidas = Boolean(largo || ancho || alto)
+  const hayFiltros = Boolean(texto) || hayMedidas
 
   const resultados = useMemo(() => {
     const q = texto.trim().toLowerCase()
-    const cerca = (valor: number, objetivo: string) =>
-      objetivo === "" || Math.abs(valor - Number(objetivo)) <= TOLERANCIA
+    const cerca = (valor: number | null, objetivo: string) => {
+      if (objetivo === "") return true
+      if (valor === null) return false
+      return Math.abs(valor - Number(objetivo)) <= TOLERANCIA
+    }
 
     return productos.filter((p) => {
       const textoOk =
         !q ||
-        [p.nombre, p.categoria, p.descripcion].some((s) =>
-          s.toLowerCase().includes(q),
+        [p.nombre, p.categoria, p.descripcion, p.medida].some((s) =>
+          s?.toLowerCase().includes(q),
         )
+      // Con filtro de medidas, un producto sin dimensiones no puede compararse.
+      if (hayMedidas && !tieneMedidas(p)) return false
       return (
         textoOk &&
         cerca(p.largo, largo) &&
@@ -41,7 +47,7 @@ export function CatalogoBuscador({ productos }: Props) {
         cerca(p.alto, alto)
       )
     })
-  }, [productos, texto, largo, ancho, alto])
+  }, [productos, texto, largo, ancho, alto, hayMedidas])
 
   function limpiar() {
     setTexto("")
@@ -79,10 +85,10 @@ export function CatalogoBuscador({ productos }: Props) {
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <p className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Ruler className="size-4 text-brand-blue" aria-hidden />
+            <Ruler className="size-4" aria-hidden />
             {hayFiltros
-              ? `${resultados.length} ${resultados.length === 1 ? "medida" : "medidas"} (±${TOLERANCIA} cm)`
-              : `${productos.length} medidas disponibles`}
+              ? `${resultados.length} ${resultados.length === 1 ? "medida" : "medidas"}${hayMedidas ? ` (±${TOLERANCIA} cm)` : ""}`
+              : `${productos.length} ${productos.length === 1 ? "medida disponible" : "medidas disponibles"}`}
           </p>
           {hayFiltros && (
             <Button variant="ghost" size="sm" onClick={limpiar}>
@@ -97,7 +103,7 @@ export function CatalogoBuscador({ productos }: Props) {
       {resultados.length > 0 ? (
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {resultados.map((producto) => (
-            <ProductoCard key={producto.slug} producto={producto} />
+            <ProductoCard key={producto.id} producto={producto} />
           ))}
         </ul>
       ) : (

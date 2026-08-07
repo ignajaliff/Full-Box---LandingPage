@@ -73,8 +73,8 @@ npm run lint         → linter
 
 | Módulo | Estado | Tablas Supabase | Notas |
 |--------|--------|-----------------|-------|
-| Landing / Hero | UI lista | — | Hero inventado en `features/landing` |
-| Catálogo | En desarrollo | productos | DAL listo; falta crear la tabla en Supabase y las páginas |
+| Landing / Hero | UI lista | — | Hero con foto real + insights, responsive |
+| Catálogo | Completo | productos | Conectado a Supabase (lectura pública). Home + `/productos` con buscador por medidas y cotizador |
 | Auth | Pendiente | user_roles | solo si hay e-commerce |
 | Carrito | Pendiente | — | solo si hay e-commerce |
 | Checkout / Pagos | Pendiente | ordenes, items_orden | solo si hay e-commerce |
@@ -86,25 +86,27 @@ Estados: `Pendiente` / `En desarrollo` / `UI lista` / `Completo`
 
 ## Base de datos — Tablas creadas
 
+Proyecto Supabase: **`full_box`** (id `bwjppaihfaxcertrzsbr`, región sa-east-1).
+
 ```
-[Ninguna todavía en Supabase]
+- user_roles → roles (solo 'admin'). Usado por el sistema de gestión.
+- productos  → catálogo. Compartida entre la landing (solo lectura) y el
+               sistema de gestión (escritura).
 ```
 
-> Próxima: `productos` (catálogo informativo). Schema previsto y reflejado en
-> `src/integrations/supabase/types.ts` (escrito a mano hasta crear la tabla):
-> `id, slug (unique), nombre, descripcion, precio numeric(12,2) null, imagen_url,
-> categoria, destacado bool, activo bool, created_at, updated_at`.
-> Al crearla: campos estándar + constraints + trigger `updated_at` + RLS (SELECT público,
-> escritura solo service key por ahora) y regenerar `types.ts` con el MCP.
+**`productos`** — columnas:
+`id uuid pk, nombre text, medida text, slug text unique, categoria text,
+descripcion text, largo/ancho/alto numeric(6,1), precio numeric(12,2) null,
+imagen_url text, destacado bool, activo bool, created_at, updated_at`
 
-Ejemplo:
-```
-- user_roles    → roles (admin, gerente, cliente)
-- productos     → catálogo (slug, precio, stock)
-- categorias    → categorías
-- ordenes       → cabecera de orden (estado, total, pago_id)
-- items_orden   → detalle (precio_unitario congelado)
-```
+* **RLS**: `anon`+`authenticated` pueden SELECT solo `activo = true`
+  (política `catalogo publico lee productos activos`). La escritura sigue
+  restringida a `tiene_rol('admin')` — el sistema de gestión.
+* **Triggers**: `set_updated_at` (moddatetime) y `productos_normalizar_trg`, que
+  sincroniza el texto `medida` desde largo/ancho/alto y autogenera `slug` desde
+  `nombre` (con sufijo numérico si se repite).
+* `largo/ancho/alto` son **necesarios** para el buscador por medidas y el
+  cotizador: un producto sin las tres dimensiones no aparece en esas búsquedas.
 
 ---
 
@@ -152,24 +154,32 @@ Registrar aquí lo que se salga del estándar.
 
 ## Estado actual del desarrollo
 
-**Última sesión**: 2026-06-20
-**Próximo paso**: crear la tabla `productos` en Supabase (con RLS + trigger), regenerar
-`types.ts` con el MCP, y armar las páginas `/productos` y `/productos/[slug]` (ISR) usando el DAL ya escrito.
+**Última sesión**: 2026-08-07
+**Próximo paso**: cargar las fotos reales por producto (`imagen_url`) y revisar los
+precios placeholder desde el sistema de gestión.
 
 **Lo que está funcionando**:
-* Proyecto Next.js 16 + Tailwind v4 + shadcn scaffolded; `tsc --noEmit` y `npm run build` pasan.
-* Estructura por features (`features/`, `shared/`, `lib/`, `data/`, `integrations/`).
-* Clientes de Supabase (browser + server) y DAL del catálogo (`features/productos/queries.ts`).
-* Home `/` con sección Hero inventada (`features/landing/components/Hero.tsx`), estática.
+* Landing completa y responsive: Hero (a pantalla completa, foto real), catálogo
+  destacado, sección "a medida" con cotizador, clientes, "Encontranos" (mapa) y footer.
+* **Catálogo conectado a Supabase**: home y `/productos` leen del DAL
+  (`features/productos/queries.ts`). Sin datos hardcodeados.
+* Buscador por medidas (±5 cm) y cotizador (match exacto / similares / estimado).
+* `.env.local` configurado con URL + anon key del proyecto `full_box`.
+* `tsc --noEmit` y `npm run build` pasan.
 
 **Lo que está pendiente**:
-* Tabla `productos` real en Supabase + RLS + seed de datos.
-* Páginas de catálogo y detalle de producto; navbar/footer.
-* Variables de entorno reales en `.env.local` (ver `.env.example`).
+* `/productos/[slug]` (detalle) — el DAL `getProductoBySlug()` ya está listo, falta la página.
+* Fotos reales por producto: hoy todas usan `/producto-ejemplo.png` como fallback.
+* Logos reales de clientes y datos de contacto reales (`features/landing/data/contenido.ts`).
 
 **Problemas conocidos o deuda técnica**:
-* `types.ts` está escrito a mano (placeholder) hasta crear la tabla y regenerarlo con el MCP.
-* `getProductos()` fallará hasta que existan las env vars de Supabase y la tabla `productos`.
+* **Precios placeholder**: los 5 productos tienen precios estimados por fórmula, no reales.
+  Actualizar desde el sistema de gestión.
+* El sistema de gestión sólo escribe `nombre` + `medida`; los productos nuevos que cree
+  quedarán sin categoría/descripción/precio y **sin largo/ancho/alto** (no aparecerán en el
+  buscador por medidas ni en el cotizador hasta cargarlos).
+* Advisors preexistentes (no introducidos por la landing): `tiene_rol` es SECURITY DEFINER
+  ejecutable por `authenticated`, y falta activar leaked-password protection en Auth.
 
 ---
 

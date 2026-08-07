@@ -9,13 +9,10 @@ const MAPA_LINK = `https://www.google.com/maps/dir/?api=1&destination=${MAPA_QUE
 
 export function Contacto() {
   return (
-    <section id="contacto" className="border-b bg-muted/30">
+    <section id="contacto" className="bg-white">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mb-12 flex flex-col gap-3 text-center">
-          <span className="mx-auto text-sm font-semibold uppercase tracking-[0.2em] text-brand-blue">
-            Dónde estamos
-          </span>
-          <h2 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+        <div className="mb-12 flex flex-col items-center gap-5 text-center">
+          <h2 className="text-4xl font-bold tracking-tight md:text-5xl">
             Encontranos
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground">
@@ -38,7 +35,10 @@ export function Contacto() {
               <ContactoItem icon={Clock} label="Horario" valor={EMPRESA.horario} />
             </ul>
 
-            <Button asChild className="mt-2 w-fit">
+            <Button
+              asChild
+              className="mt-2 w-fit bg-cardboard text-cardboard-foreground hover:bg-cardboard/90"
+            >
               <a href={MAPA_LINK} target="_blank" rel="noopener noreferrer">
                 <Navigation className="size-4" aria-hidden />
                 Cómo llegar
@@ -75,7 +75,7 @@ function ContactoItem({
 }) {
   const contenido = (
     <>
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-brand-blue-soft text-brand-blue">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-muted text-foreground">
         <Icon className="size-5" aria-hidden />
       </span>
       <span className="flex flex-col">
@@ -92,7 +92,7 @@ function ContactoItem({
       {href ? (
         <a
           href={href}
-          className="flex items-center gap-3 rounded-lg transition-colors hover:text-brand-blue"
+          className="flex items-center gap-3 rounded-lg transition-opacity hover:opacity-70"
         >
           {contenido}
         </a>

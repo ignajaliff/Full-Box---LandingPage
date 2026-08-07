@@ -22,9 +22,9 @@
   --brand-blue: #1f6feb;
   --brand-blue-foreground: oklch(0.985 0 0);
   --brand-blue-soft: oklch(0.96 0.025 255); /* tinte muy claro para fondos/badges */
-  /* Color cartón (de la caja) para detalles. */
-  --cardboard: #c79a5b;
-  --cardboard-foreground: oklch(0.205 0 0);
+  /* Color cartón (de la caja) para detalles y acentos de marca. */
+  --cardboard: #9c6b31;
+  --cardboard-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -35,7 +35,7 @@
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: var(--brand-blue);
+  --ring: oklch(0.708 0 0);
 }
 
 .dark {
@@ -50,8 +50,8 @@
   --brand-blue: #4d94ff; /* azul aclarado para contraste en dark */
   --brand-blue-foreground: oklch(0.145 0 0);
   --brand-blue-soft: oklch(0.28 0.06 255);
-  --cardboard: #c79a5b;
-  --cardboard-foreground: oklch(0.205 0 0);
+  --cardboard: #c08b4a;
+  --cardboard-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -91,9 +91,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-bricolage), var(--font-geist-sans);
+  /* Poppins también para títulos: una sola familia en todo el sitio. */
+  --font-display: var(--font-poppins);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -131,101 +132,3 @@
   .blob { animation: none; }
 }
 
-/* ---------------------------------------------------------------------------
- * Caja de cartón que se arma sola (Hero). CSS 3D puro.
- * El net plano (frente + paredes + tapa trasera) se pliega con --fold: 0°→90°.
- * Colores kraft locales (ilustración decorativa, no superficie de UI).
- * ------------------------------------------------------------------------- */
-@property --fold {
-  syntax: "<angle>";
-  inherits: true;
-  initial-value: 0deg;
-}
-
-.box-scene {
-  /* Escala según el ancho de la columna (no del viewport): así el net
-   * desplegado entra completo tanto en mobile (1 col) como en desktop (2 cols). */
-  container-type: inline-size;
-  /* Caja rectangular: frente W×H, profundidad D (derivadas de W). */
-  --w: clamp(112px, 32cqw, 230px);
-  --h: calc(var(--w) * 0.72);
-  --d: calc(var(--w) * 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 230px;
-  perspective: 1300px;
-}
-
-@media (min-width: 768px) {
-  .box-scene { min-height: 360px; }
-}
-
-.box-3d {
-  position: relative;
-  width: var(--w);
-  height: var(--h);
-  transform-style: preserve-3d;
-  animation:
-    box-sway 12s ease-in-out infinite,
-    box-fold 7s ease-in-out infinite;
-}
-
-/* Vaivén suave 3/4 para dar vida sin que el net plano se salga del marco. */
-@keyframes box-sway {
-  0%, 100% { transform: rotateX(-16deg) rotateY(-34deg); }
-  50%      { transform: rotateX(-11deg) rotateY(-16deg); }
-}
-
-/* Plegado: plano (0°) → armado (90°) → se mantiene → vuelve a plano. */
-@keyframes box-fold {
-  0%, 10%   { --fold: 0deg; }
-  40%, 62%  { --fold: 90deg; }
-  92%, 100% { --fold: 0deg; }
-}
-
-.panel {
-  --kraft: #cba368;
-  position: absolute;
-  top: 0;
-  left: 0;
-  box-sizing: border-box;
-  background-color: var(--kraft);
-  border: 1px solid rgba(74, 48, 18, 0.4);
-}
-
-/* Costura central de las solapas (lee como caja real). */
-.face-top::after,
-.face-bottom::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-top: 1px dashed rgba(74, 48, 18, 0.3);
-  top: 50%;
-}
-
-/* Dimensiones por cara: frente/atrás W×H, tapa/base W×D, laterales D×H. */
-.face-front  { --kraft: #d8b277; width: var(--w); height: var(--h); }
-.face-top    { --kraft: #e3c089; width: var(--w); height: var(--d); top: calc(-1 * var(--d)); transform-origin: 50% 100%; transform: rotateX(var(--fold)); }
-.face-bottom { --kraft: #b88c4f; width: var(--w); height: var(--d); top: 100%; transform-origin: 50% 0; transform: rotateX(calc(-1 * var(--fold))); }
-.face-left   { --kraft: #c39a5d; width: var(--d); height: var(--h); left: calc(-1 * var(--d)); transform-origin: 100% 50%; transform: rotateY(calc(-1 * var(--fold))); }
-.face-right  { --kraft: #c39a5d; width: var(--d); height: var(--h); left: 100%; transform-origin: 0 50%; transform: rotateY(var(--fold)); transform-style: preserve-3d; }
-.face-back   { --kraft: #b88c4f; width: var(--w); height: var(--h); left: 100%; transform-origin: 0 50%; transform: rotateY(var(--fold)); }
-
-/* Logo Full Box impreso en la cara frontal. */
-.box-logo {
-  position: absolute;
-  inset: 16% 12%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .box-3d {
-    animation: none;
-    --fold: 90deg;
-    transform: rotateX(-15deg) rotateY(-30deg);
-  }
-}

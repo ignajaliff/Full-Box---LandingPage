@@ -1,8 +1,9 @@
-import Image from "next/image"
-import { MessageCircle } from "lucide-react"
+"use client"
 
-import { Button } from "@/shared/components/ui/button"
-import { EMPRESA, linkWhatsApp } from "../data/contenido"
+import Image from "next/image"
+import { useEffect, useState } from "react"
+
+import { EMPRESA } from "../data/contenido"
 
 const LINKS = [
   { href: "/productos", label: "Catálogo" },
@@ -12,15 +13,29 @@ const LINKS = [
 ] as const
 
 export function Navbar() {
+  // La línea separadora aparece recién al hacer scroll.
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+    <header
+      className={`sticky top-0 z-50 bg-background/80 backdrop-blur transition-shadow ${
+        scrolled ? "border-b" : "border-b border-transparent"
+      }`}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <a href="/" className="flex items-center" aria-label={EMPRESA.nombre}>
           <Image
-            src="/logofullbox.png"
+            src="/logogrisoscuro.png"
             alt={EMPRESA.nombre}
-            width={754}
-            height={331}
+            width={597}
+            height={294}
             priority
             className="h-9 w-auto"
           />
@@ -31,23 +46,12 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-brand-blue"
+              className="text-sm font-medium text-foreground transition-opacity hover:opacity-70"
             >
               {link.label}
             </a>
           ))}
         </nav>
-
-        <Button asChild size="sm">
-          <a
-            href={linkWhatsApp("¡Hola! Quiero hacer una consulta sobre cajas.")}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MessageCircle className="size-4" aria-hidden />
-            WhatsApp
-          </a>
-        </Button>
       </div>
     </header>
   )

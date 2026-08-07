@@ -3,19 +3,18 @@ import { ArrowRight } from "lucide-react"
 
 import { Button } from "@/shared/components/ui/button"
 import { ProductoCard } from "@/features/productos/components/ProductoCard"
-import { getDestacados } from "@/features/productos/data/demo"
+import { getProductosDestacados } from "@/features/productos/queries"
 
-export function CatalogoDestacado() {
-  const destacados = getDestacados(4)
+export async function CatalogoDestacado() {
+  const destacados = await getProductosDestacados(4)
+
+  if (destacados.length === 0) return null
 
   return (
-    <section id="catalogo" className="border-b">
+    <section id="catalogo" className="bg-white">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mb-12 flex flex-col gap-3 text-center">
-          <span className="mx-auto text-sm font-semibold uppercase tracking-[0.2em] text-brand-blue">
-            Los más pedidos
-          </span>
-          <h2 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+        <div className="mb-12 flex flex-col items-center gap-5 text-center">
+          <h2 className="text-4xl font-bold tracking-tight md:text-5xl">
             Las cajas que más nos piden
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground">
@@ -26,12 +25,16 @@ export function CatalogoDestacado() {
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {destacados.map((producto) => (
-            <ProductoCard key={producto.slug} producto={producto} />
+            <ProductoCard key={producto.id} producto={producto} />
           ))}
         </ul>
 
         <div className="mt-12 flex justify-center">
-          <Button asChild size="lg">
+          <Button
+            asChild
+            size="lg"
+            className="bg-cardboard text-cardboard-foreground hover:bg-cardboard/90"
+          >
             <Link href="/productos">
               Ver todas las medidas existentes
               <ArrowRight className="size-4" aria-hidden />

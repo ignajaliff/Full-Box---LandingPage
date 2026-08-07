@@ -22,9 +22,10 @@ export function linkWhatsApp(mensaje: string): string {
 }
 
 export const STATS = [
-  { valor: "+30", etiqueta: "años fabricando en Mendoza" },
+  { valor: "+30", etiqueta: "años de trayectoria" },
   { valor: "+500", etiqueta: "clientes activos" },
-  { valor: "72 hs", etiqueta: "plazo promedio de entrega" },
+  { valor: "72 hs", etiqueta: "plazo de entrega" },
+  { valor: "A medida", etiqueta: "lo desarrollamos para vos" },
 ] as const
 
 /** Pasos del proceso de fabricación a medida. */

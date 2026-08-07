@@ -1,23 +1,24 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { CheckCircle2, MessageCircle, Ruler, Sparkles } from "lucide-react"
+import { CheckCircle2, MessageCircle, Ruler } from "lucide-react"
 
 import { Button } from "@/shared/components/ui/button"
 import { formatCurrency } from "@/lib/format-currency"
 import { linkWhatsApp } from "@/features/landing/data/contenido"
 import {
-  PRODUCTOS_DEMO,
   estimarPrecio,
   formatMedidas,
-  type ProductoDemo,
-} from "../data/demo"
+  tieneMedidas,
+  type Producto,
+  type ProductoConMedidas,
+} from "../types"
 
 /** Distancia máxima (cm) para considerar una caja "parecida". */
 const UMBRAL_SIMILAR = 9
 
 const inputClass =
-  "h-11 w-full rounded-md border bg-background px-3 text-sm outline-none transition-colors focus-visible:border-brand-blue focus-visible:ring-[3px] focus-visible:ring-brand-blue/30"
+  "h-11 w-full rounded-md border bg-background px-3 text-sm outline-none transition-colors focus-visible:border-foreground/40 focus-visible:ring-[3px] focus-visible:ring-foreground/10"
 
 /** Dimensiones ordenadas desc → comparación independiente del orden de carga. */
 function ordenar(l: number, a: number, h: number): [number, number, number] {
@@ -28,13 +29,15 @@ function distancia(a: number[], b: number[]): number {
   return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2])
 }
 
-export function Cotizador() {
+export function Cotizador({ productos }: { productos: Producto[] }) {
   const [largo, setLargo] = useState("")
   const [ancho, setAncho] = useState("")
   const [alto, setAlto] = useState("")
 
-  const completo =
-    Number(largo) > 0 && Number(ancho) > 0 && Number(alto) > 0
+  const completo = Number(largo) > 0 && Number(ancho) > 0 && Number(alto) > 0
+
+  // Solo los productos con las tres dimensiones son comparables.
+  const comparables = useMemo(() => productos.filter(tieneMedidas), [productos])
 
   const resultado = useMemo(() => {
     if (!completo) return null
@@ -43,10 +46,9 @@ export function Cotizador() {
     const h = Number(alto)
     const objetivo = ordenar(l, a, h)
 
-    const ranking = PRODUCTOS_DEMO.map((p) => ({
-      p,
-      d: distancia(objetivo, ordenar(p.largo, p.ancho, p.alto)),
-    })).sort((x, y) => x.d - y.d)
+    const ranking = comparables
+      .map((p) => ({ p, d: distancia(objetivo, ordenar(p.largo, p.ancho, p.alto)) }))
+      .sort((x, y) => x.d - y.d)
 
     const exacto = ranking.find((r) => r.d === 0)?.p ?? null
     const similares = ranking
@@ -58,11 +60,11 @@ export function Cotizador() {
       exacto,
       similares,
       precio: estimarPrecio({ largo: l, ancho: a, alto: h }),
-      medidas: formatMedidas({ largo: l, ancho: a, alto: h }),
+      medidas: `${l} × ${a} × ${h} cm`,
     }
-  }, [completo, largo, ancho, alto])
+  }, [completo, largo, ancho, alto, comparables])
 
-  function usar(p: ProductoDemo) {
+  function usar(p: ProductoConMedidas) {
     setLargo(String(p.largo))
     setAncho(String(p.ancho))
     setAlto(String(p.alto))
@@ -71,11 +73,7 @@ export function Cotizador() {
   return (
     <div id="cotizador" className="rounded-2xl border bg-card p-6 text-card-foreground md:p-8">
       <div className="flex flex-col gap-2">
-        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cardboard/50 bg-cardboard/10 px-3 py-1 text-xs font-medium text-foreground">
-          <Sparkles className="size-3.5 text-cardboard" aria-hidden />
-          Cotizador (ejemplo)
-        </span>
-        <h3 className="font-display text-2xl font-bold tracking-tight">
+        <h3 className="text-2xl font-bold tracking-tight">
           Decinos las medidas y te decimos el precio
         </h3>
         <p className="text-sm text-muted-foreground">
@@ -115,10 +113,10 @@ export function Cotizador() {
   )
 }
 
-function ResultadoExacto({ producto }: { producto: ProductoDemo }) {
+function ResultadoExacto({ producto }: { producto: Producto }) {
   return (
-    <div className="rounded-xl border border-primary/40 bg-primary/5 p-5">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+    <div className="rounded-xl border bg-muted/40 p-5">
+      <span className="inline-flex items-center gap-1.5 bg-foreground px-3 py-1 text-xs font-medium text-background">
         <CheckCircle2 className="size-3.5" aria-hidden />
         Ya la fabricamos
       </span>
@@ -126,17 +124,20 @@ function ResultadoExacto({ producto }: { producto: ProductoDemo }) {
         <div>
           <h4 className="font-semibold">{producto.nombre}</h4>
           <p className="text-sm text-muted-foreground">
-            {producto.categoria} · {formatMedidas(producto)}
+            {producto.categoria ? `${producto.categoria} · ` : ""}
+            {formatMedidas(producto)}
           </p>
         </div>
-        <div className="text-right">
-          <span className="block text-xs text-muted-foreground">desde</span>
-          <span className="font-display text-2xl font-bold text-brand-blue">
-            {formatCurrency(producto.desde)}
-          </span>
-        </div>
+        {producto.precio !== null && (
+          <div className="text-right">
+            <span className="block text-xs text-muted-foreground">desde</span>
+            <span className="text-2xl font-bold">
+              {formatCurrency(producto.precio)}
+            </span>
+          </div>
+        )}
       </div>
-      <Button asChild className="mt-4">
+      <Button asChild className="mt-4 bg-cardboard text-cardboard-foreground hover:bg-cardboard/90">
         <a
           href={linkWhatsApp(
             `¡Hola! Quiero pedir la ${producto.nombre} (${formatMedidas(producto)}).`,
@@ -160,12 +161,12 @@ function ResultadoMedida({
 }: {
   medidas: string
   precio: number
-  similares: ProductoDemo[]
-  onUsar: (p: ProductoDemo) => void
+  similares: ProductoConMedidas[]
+  onUsar: (p: ProductoConMedidas) => void
 }) {
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-xl border border-cardboard/50 bg-cardboard/10 p-5">
+      <div className="rounded-xl border bg-muted/40 p-5">
         <p className="text-sm text-muted-foreground">
           No tenemos exactamente <span className="font-medium text-foreground">{medidas}</span>,
           pero la fabricamos a medida.
@@ -173,12 +174,12 @@ function ResultadoMedida({
         <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="block text-xs text-muted-foreground">Precio estimado a medida</span>
-            <span className="font-display text-3xl font-bold tracking-tight">
+            <span className="text-3xl font-bold tracking-tight">
               {formatCurrency(precio)}
             </span>
             <span className="ml-1 text-xs text-muted-foreground">/ unidad aprox.</span>
           </div>
-          <Button asChild>
+          <Button asChild className="bg-cardboard text-cardboard-foreground hover:bg-cardboard/90">
             <a
               href={linkWhatsApp(
                 `¡Hola! Quiero cotizar una caja a medida de ${medidas}. Vi un estimado de ${formatCurrency(precio)}.`,
@@ -199,7 +200,7 @@ function ResultadoMedida({
           <ul className="flex flex-col gap-2">
             {similares.map((p) => (
               <li
-                key={p.slug}
+                key={p.id}
                 className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-background p-3"
               >
                 <span className="text-sm">
@@ -207,9 +208,11 @@ function ResultadoMedida({
                   <span className="text-muted-foreground"> · {formatMedidas(p)}</span>
                 </span>
                 <span className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-brand-blue">
-                    {formatCurrency(p.desde)}
-                  </span>
+                  {p.precio !== null && (
+                    <span className="text-sm font-semibold">
+                      {formatCurrency(p.precio)}
+                    </span>
+                  )}
                   <Button variant="outline" size="sm" onClick={() => onUsar(p)}>
                     Usar estas medidas
                   </Button>
