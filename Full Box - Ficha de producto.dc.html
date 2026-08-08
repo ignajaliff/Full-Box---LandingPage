@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#f6f6f5; font-family:Poppins,system-ui,sans-serif; color:#252525; }
+  a { color:#405050; text-decoration:none; }
+  a:hover { color:#9c6b31; }
+  * { box-sizing:border-box; }
+  input, button, select { font-family:inherit; }
+</style>
+</helmet>
+
+<div>
+  <header style="position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e6e6e4;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:16px 28px;">
+      <a href="#" style="display:flex;align-items:center;"><img src="logogrisoscuro.png" alt="Full Box" style="height:32px;width:auto;display:block;"></a>
+      <div style="flex:1;display:flex;align-items:center;gap:10px;height:44px;padding:0 16px;border:1px solid #e0e0dd;border-radius:12px;background:#fbfbfa;max-width:520px;margin:0 auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a8a86" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input placeholder="Buscar: vino, e-commerce, mudanza…" style="border:0;outline:0;font-size:14px;width:100%;background:transparent;color:#252525;">
+      </div>
+      <nav style="display:flex;align-items:center;gap:22px;font-size:14px;font-weight:500;">
+        <a href="Full Box - Catalogo.dc.html" style="color:#252525;">Catálogo</a>
+        <a href="#" style="color:#252525;">Contacto</a>
+        <a href="#" style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 18px;border-radius:12px;background:#252525;color:#fff;font-size:13.5px;font-weight:600;">Mi pedido · 0</a>
+      </nav>
+    </div>
+  </header>
+
+  <div style="max-width:1280px;margin:0 auto;padding:24px 28px 0;">
+    <p style="margin:0;font-size:12.5px;color:#a5a5a0;">Inicio · Catálogo · {{ fichaCategoria }} · <span style="color:#6b6b67;">{{ fichaNombre }}</span></p>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto;padding:24px 28px 64px;display:grid;grid-template-columns:1.1fr 1fr;gap:44px;align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="aspect-ratio:1;border:1px solid #ececea;border-radius:20px;background:#fbfbfa;display:flex;align-items:center;justify-content:center;padding:40px;">
+        <img src="producto-ejemplo.png" alt="{{ fichaNombre }}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;">
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+        <div style="aspect-ratio:1;border:1.5px solid #405050;border-radius:14px;background:#fbfbfa;display:flex;align-items:center;justify-content:center;padding:12px;">
+          <img src="producto-ejemplo.png" alt="" style="max-width:100%;max-height:100%;object-fit:contain;">
+        </div>
+        <div style="aspect-ratio:1;border:1px solid #ececea;border-radius:14px;background:#fbfbfa;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#b5b5b0;font-family:ui-monospace,monospace;text-align:center;padding:8px;">foto<br>lateral</div>
+        <div style="aspect-ratio:1;border:1px solid #ececea;border-radius:14px;background:#fbfbfa;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#b5b5b0;font-family:ui-monospace,monospace;text-align:center;padding:8px;">caja<br>armada</div>
+        <div style="aspect-ratio:1;border:1px solid #ececea;border-radius:14px;background:#fbfbfa;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#b5b5b0;font-family:ui-monospace,monospace;text-align:center;padding:8px;">marca<br>impresa</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <span style="width:fit-content;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8a8a86;">{{ fichaCategoria }}</span>
+      <h1 style="margin:0;font-size:38px;line-height:1.12;letter-spacing:-.025em;font-weight:700;">{{ fichaNombre }}</h1>
+      <p style="margin:0;font-size:15.5px;line-height:1.6;color:#6b6b67;max-width:34em;">{{ fichaDescripcion }}</p>
+
+      <div style="display:flex;align-items:baseline;gap:10px;padding:18px 0;border-top:1px solid #eeeeec;border-bottom:1px solid #eeeeec;">
+        <span style="font-size:12.5px;color:#8a8a86;">desde</span>
+        <span style="font-size:36px;font-weight:700;letter-spacing:-.025em;">{{ fichaPrecio }}</span>
+        <span style="font-size:13px;color:#8a8a86;">/ unidad + IVA</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <span style="font-size:12.5px;font-weight:600;color:#8a8a86;">Cantidad — el precio baja por volumen</span>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;">
+          <sc-for list="{{ tramos }}" as="t" hint-placeholder-count="4">
+            <button onClick="{{ t.onClick }}" style="{{ t.style }}">
+              <span style="font-size:13.5px;font-weight:600;">{{ t.cantidad }}</span>
+              <span style="font-size:11.5px;color:#8a8a86;">{{ t.precio }} c/u</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;border:1px solid #e0e0dd;border-radius:12px;height:52px;overflow:hidden;background:#fff;">
+          <button onClick="{{ menos }}" style="width:44px;height:100%;border:0;background:transparent;font-size:19px;color:#6b6b67;cursor:pointer;">−</button>
+          <span style="width:56px;text-align:center;font-size:15px;font-weight:600;">{{ cantidad }}</span>
+          <button onClick="{{ mas }}" style="width:44px;height:100%;border:0;background:transparent;font-size:19px;color:#6b6b67;cursor:pointer;">+</button>
+        </div>
+        <a href="#" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:9px;height:52px;border-radius:14px;background:#252525;color:#fff;font-size:15px;font-weight:600;">Agregar al pedido · {{ subtotal }}</a>
+      </div>
+      <a href="#" style="display:inline-flex;align-items:center;justify-content:center;gap:9px;height:52px;border-radius:14px;background:#9c6b31;color:#fff;font-size:15px;font-weight:600;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"></path></svg>
+        Consultar por WhatsApp
+      </a>
+
+      <ul style="margin:6px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <li style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1px solid #ececea;border-radius:12px;background:#fbfbfa;">
+          <span style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#a5a5a0;">Medidas</span>
+          <span style="font-size:14px;font-weight:600;">{{ fichaMedidas }}</span>
+        </li>
+        <li style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1px solid #ececea;border-radius:12px;background:#fbfbfa;">
+          <span style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#a5a5a0;">Cartón</span>
+          <span style="font-size:14px;font-weight:600;">Corrugado simple, kraft</span>
+        </li>
+        <li style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1px solid #ececea;border-radius:12px;background:#fbfbfa;">
+          <span style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#a5a5a0;">Plazo</span>
+          <span style="font-size:14px;font-weight:600;">72 hs</span>
+        </li>
+        <li style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1px solid #ececea;border-radius:12px;background:#fbfbfa;">
+          <span style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#a5a5a0;">Impresión</span>
+          <span style="font-size:14px;font-weight:600;">Tu marca, opcional</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <section style="background:#fff;border-top:1px solid #e6e6e4;padding:56px 0;">
+    <div style="max-width:1280px;margin:0 auto;padding:0 28px;">
+      <h2 style="margin:0 0 20px;font-size:26px;font-weight:700;letter-spacing:-.02em;">Medidas parecidas en catálogo</h2>
+      <ul style="margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+        <sc-for list="{{ similares }}" as="p" hint-placeholder-count="5">
+          <li style="display:flex;flex-direction:column;background:#fff;border:1px solid #ececea;border-radius:14px;overflow:hidden;" style-hover="box-shadow:0 8px 22px rgba(0,0,0,.06);">
+            <div style="aspect-ratio:1;background:#fbfbfa;display:flex;align-items:center;justify-content:center;padding:14px;">
+              <img src="producto-ejemplo.png" alt="{{ p.nombre }}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;padding:14px;">
+              <h3 style="margin:0;font-size:13.5px;font-weight:600;line-height:1.35;">{{ p.nombre }}</h3>
+              <span style="font-size:12px;color:#8a8a86;">{{ p.medidas }}</span>
+              <span style="margin-top:6px;font-size:15px;font-weight:700;">{{ p.precioFmt }}</span>
+            </div>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </section>
+
+  <section style="background:#f6f6f5;padding:56px 0;border-top:1px solid #e6e6e4;">
+    <div style="max-width:1280px;margin:0 auto;padding:0 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+      <sc-for list="{{ proceso }}" as="item" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:8px;padding:24px;background:#fff;border:1px solid #e6e6e4;border-radius:18px;">
+          <span style="font-size:26px;font-weight:800;letter-spacing:-.03em;color:#9c6b31;">{{ item.paso }}</span>
+          <h3 style="margin:0;font-size:15px;font-weight:600;">{{ item.titulo }}</h3>
+          <p style="margin:0;font-size:13.5px;line-height:1.55;color:#6b6b67;">{{ item.texto }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <footer style="border-top:1px solid #e6e6e4;background:#fff;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px 28px;">
+      <img src="logocolorcaja.png" alt="Full Box" style="height:36px;width:auto;display:block;">
+      <p style="margin:0;font-size:12.5px;color:#8a8a86;">Parque Industrial, Mendoza · +54 261 000-0000 · ventas@fullbox.com.ar</p>
+      <p style="margin:0;font-size:12px;color:#a5a5a0;">© 2026 Full Box</p>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script data-dc-script type="text/plain" data-props='{"$preview":{"width":1400,"height":900}}'>
+const PRODUCTOS = [
+  { id:1, nombre:"Caja vinos x6", categoria:"Vinos", descripcion:"Con divisores internos, apilable para pallet.", largo:34, ancho:23, alto:31, precio:1490 },
+  { id:2, nombre:"Caja vinos x12", categoria:"Vinos", descripcion:"Doble corrugado para carga pesada.", largo:34, ancho:34, alto:31, precio:2180 },
+  { id:3, nombre:"Caja e-commerce chica", categoria:"E-commerce", descripcion:"Autoarmable, ideal para envíos livianos.", largo:25, ancho:18, alto:10, precio:520 },
+  { id:4, nombre:"Caja e-commerce mediana", categoria:"E-commerce", descripcion:"La más pedida para paquetería.", largo:35, ancho:25, alto:15, precio:790 },
+  { id:5, nombre:"Caja e-commerce grande", categoria:"E-commerce", descripcion:"Para pedidos de varios artículos.", largo:45, ancho:35, alto:25, precio:1240 },
+  { id:6, nombre:"Caja mudanza estándar", categoria:"Mudanza", descripcion:"Cartón reforzado, soporta 25 kg.", largo:50, ancho:40, alto:40, precio:1680 },
+  { id:7, nombre:"Caja mudanza grande", categoria:"Mudanza", descripcion:"Volumen extra para ropa y blancos.", largo:60, ancho:45, alto:45, precio:2090 },
+  { id:8, nombre:"Caja retail exhibidora", categoria:"Retail", descripcion:"Tapa desprendible para góndola.", largo:40, ancho:30, alto:12, precio:1350 },
+  { id:9, nombre:"Caja retail premium", categoria:"Retail", descripcion:"Impresión a full color sobre kraft.", largo:30, ancho:22, alto:10, precio:1720 },
+  { id:10, nombre:"Caja olivícola x4", categoria:"Alimentos", descripcion:"Para botellas de aceite de 500 ml.", largo:28, ancho:20, alto:28, precio:1180 },
+  { id:11, nombre:"Caja frutas ventilada", categoria:"Alimentos", descripcion:"Perforada, apta para cámara de frío.", largo:50, ancho:30, alto:20, precio:940 },
+  { id:12, nombre:"Caja archivo oficio", categoria:"Archivo", descripcion:"Con tapa y visor para etiqueta.", largo:38, ancho:28, alto:26, precio:860 },
+  { id:13, nombre:"Caja archivo A4", categoria:"Archivo", descripcion:"Medida estándar para biblioratos.", largo:33, ancho:24, alto:24, precio:740 },
+  { id:14, nombre:"Caja pizza 32 cm", categoria:"Alimentos", descripcion:"Microcorrugado blanco, apta alimentos.", largo:32, ancho:32, alto:4, precio:390 },
+  { id:15, nombre:"Caja regalo cuadrada", categoria:"Retail", descripcion:"Tapa y base, terminación prolija.", largo:22, ancho:22, alto:12, precio:980 },
+  { id:16, nombre:"Caja industrial pesada", categoria:"Industria", descripcion:"Triple corrugado para repuestos.", largo:60, ancho:40, alto:40, precio:3150 },
+];
+
+const CATEGORIAS = ["Vinos","E-commerce","Mudanza","Retail","Alimentos","Archivo","Industria"];
+const RANGOS = [
+  { id:"todos", nombre:"Todos los precios", test:() => true },
+  { id:"a", nombre:"Hasta $800", test:(p) => p.precio <= 800 },
+  { id:"b", nombre:"$800 a $1.500", test:(p) => p.precio > 800 && p.precio <= 1500 },
+  { id:"c", nombre:"Más de $1.500", test:(p) => p.precio > 1500 },
+];
+
+const fmt = new Intl.NumberFormat("es-AR", { style:"currency", currency:"ARS", minimumFractionDigits:0, maximumFractionDigits:0 });
+
+class Component extends DCLogic {
+  state = {
+    screen: "homeA",
+    cLargo: "", cAncho: "", cAlto: "",
+    texto: "", fLargo: "", fAncho: "", fAlto: "",
+    categoria: null, rango: "todos", orden: "nombre",
+    cantidad: 100, tramo: 1,
+  };
+
+  deco(p) {
+    return { ...p, medidas: `${p.largo} × ${p.ancho} × ${p.alto} cm`, precioFmt: fmt.format(p.precio) };
+  }
+
+  tab(id) {
+    const on = this.state.screen === id;
+    return `height:30px;padding:0 14px;border-radius:999px;border:1px solid ${on ? "#fff" : "rgba(255,255,255,.22)"};background:${on ? "#fff" : "transparent"};color:${on ? "#252525" : "rgba(255,255,255,.7)"};font-size:12px;font-weight:600;cursor:pointer;`;
+  }
+
+  go(screen) { this.setState({ screen }); window.scrollTo(0, 0); }
+
+  renderVals() {
+    const s = this.state;
+    const TOL = 5;
+    const cerca = (v, obj) => obj === "" ? true : Math.abs(v - Number(obj)) <= TOL;
+
+    const q = s.texto.trim().toLowerCase();
+    let resultados = PRODUCTOS.filter((p) => {
+      const textoOk = !q || [p.nombre, p.categoria, p.descripcion].some((t) => t.toLowerCase().includes(q));
+      const catOk = !s.categoria || p.categoria === s.categoria;
+      const rango = RANGOS.find((r) => r.id === s.rango);
+      return textoOk && catOk && rango.test(p) && cerca(p.largo, s.fLargo) && cerca(p.ancho, s.fAncho) && cerca(p.alto, s.fAlto);
+    });
+    const vol = (p) => p.largo * p.ancho * p.alto;
+    if (s.orden === "precio-asc") resultados = [...resultados].sort((a,b) => a.precio - b.precio);
+    else if (s.orden === "precio-desc") resultados = [...resultados].sort((a,b) => b.precio - a.precio);
+    else if (s.orden === "volumen") resultados = [...resultados].sort((a,b) => vol(a) - vol(b));
+    else resultados = [...resultados].sort((a,b) => a.nombre.localeCompare(b.nombre, "es"));
+
+    const hayMedidas = Boolean(s.fLargo || s.fAncho || s.fAlto);
+    const hayFiltros = Boolean(q) || hayMedidas || s.categoria || s.rango !== "todos";
+
+    const chip = (on) => `display:flex;align-items:center;justify-content:space-between;gap:8px;height:38px;padding:0 14px;border-radius:10px;border:1px solid ${on ? "#405050" : "#eeeeec"};background:${on ? "#f2f5f4" : "#fff"};font-size:13.5px;font-weight:${on ? 600 : 500};color:#252525;cursor:pointer;text-align:left;width:100%;`;
+
+    const filtrosCategoria = [{ nombre:"Todas", id:null, count: PRODUCTOS.length }]
+      .concat(CATEGORIAS.map((c) => ({ nombre:c, id:c, count: PRODUCTOS.filter((p) => p.categoria === c).length })))
+      .map((c) => ({ ...c, style: chip(s.categoria === c.id), onClick: () => this.setState({ categoria: c.id }) }));
+
+    const filtrosPrecio = RANGOS.map((r) => ({ nombre:r.nombre, style: chip(s.rango === r.id), onClick: () => this.setState({ rango: r.id }) }));
+
+    // Cotizador
+    const cotCompleto = Number(s.cLargo) > 0 && Number(s.cAncho) > 0 && Number(s.cAlto) > 0;
+    let cotPrecio = "", cotTitulo = "", cotEtiquetaPrecio = "";
+    if (cotCompleto) {
+      const l = Number(s.cLargo), a = Number(s.cAncho), h = Number(s.cAlto);
+      const orden = (x) => [...x].sort((p,q2) => q2 - p);
+      const obj = orden([l,a,h]);
+      const dist = (b) => Math.hypot(obj[0]-b[0], obj[1]-b[1], obj[2]-b[2]);
+      const rank = PRODUCTOS.map((p) => ({ p, d: dist(orden([p.largo,p.ancho,p.alto])) })).sort((x,y) => x.d - y.d);
+      const exacto = rank[0] && rank[0].d === 0 ? rank[0].p : null;
+      if (exacto) {
+        cotTitulo = `Ya la fabricamos: ${exacto.nombre} · ${exacto.largo} × ${exacto.ancho} × ${exacto.alto} cm`;
+        cotEtiquetaPrecio = "desde";
+        cotPrecio = fmt.format(exacto.precio);
+      } else {
+        const area = 2 * (l*a + l*h + a*h);
+        const est = Math.round((80 + area * 0.08) / 10) * 10;
+        cotTitulo = `No tenemos exactamente ${l} × ${a} × ${h} cm, pero la fabricamos a medida.`;
+        cotEtiquetaPrecio = "Precio estimado a medida";
+        cotPrecio = fmt.format(est);
+      }
+    }
+
+    // Ficha
+    const ficha = PRODUCTOS[3];
+    const TRAMOS = [
+      { cantidad:"50 u.", mult:1 },
+      { cantidad:"100 u.", mult:0.92 },
+      { cantidad:"250 u.", mult:0.85 },
+      { cantidad:"500+ u.", mult:0.78 },
+    ];
+    const unit = Math.round(ficha.precio * TRAMOS[s.tramo].mult);
+    const tramos = TRAMOS.map((t, i) => ({
+      cantidad: t.cantidad,
+      precio: fmt.format(Math.round(ficha.precio * t.mult)),
+      style: `display:flex;flex-direction:column;gap:1px;align-items:flex-start;padding:10px 16px;border-radius:12px;border:1px solid ${s.tramo === i ? "#252525" : "#e0e0dd"};background:${s.tramo === i ? "#fbfbfa" : "#fff"};cursor:pointer;`,
+      onClick: () => this.setState({ tramo: i }),
+    }));
+
+    return {
+      isHomeA: s.screen === "homeA", isHomeB: s.screen === "homeB",
+      isCatalogo: s.screen === "catalogo", isFicha: s.screen === "ficha",
+      tabA: this.tab("homeA"), tabB: this.tab("homeB"), tabC: this.tab("catalogo"), tabD: this.tab("ficha"),
+      goHomeA: () => this.go("homeA"), goHomeB: () => this.go("homeB"),
+      goCatalogo: () => this.go("catalogo"), goFicha: () => this.go("ficha"),
+
+      stats: [
+        { valor:"+30", etiqueta:"años de trayectoria" },
+        { valor:"+500", etiqueta:"clientes activos" },
+        { valor:"72 hs", etiqueta:"plazo de entrega" },
+        { valor:"A medida", etiqueta:"lo desarrollamos para vos" },
+      ],
+      proceso: [
+        { paso:"01", titulo:"Nos contás tu necesidad", texto:"Producto, cantidades y uso. Te asesoramos sin cargo." },
+        { paso:"02", titulo:"Diseñamos la caja", texto:"Medidas exactas, tipo de cartón y opción de impresión de marca." },
+        { paso:"03", titulo:"Fabricamos en planta", texto:"Producción propia en Mendoza con control de calidad." },
+        { paso:"04", titulo:"Entregamos a tiempo", texto:"Logística a toda la provincia y el país." },
+      ],
+      clientes: ["Bodega Los Andes","Olivícola Cuyo","Distribuidora Mendoza","Supermercados del Oeste","Frutas del Valle","Logística Andina","Conservas San Martín","Vinos Premium SA"],
+      categorias: [
+        { nombre:"Vinos", detalle:"6 medidas" },
+        { nombre:"E-commerce", detalle:"12 medidas" },
+        { nombre:"Mudanza", detalle:"8 medidas" },
+        { nombre:"Retail", detalle:"9 medidas" },
+        { nombre:"A medida", detalle:"la fabricamos" },
+      ],
+      destacados: PRODUCTOS.slice(0, 4).map((p) => this.deco(p)),
+      productos: PRODUCTOS.slice(0, 10).map((p) => this.deco(p)),
+
+      cLargo: s.cLargo, cAncho: s.cAncho, cAlto: s.cAlto,
+      setLargo: (e) => this.setState({ cLargo: e.target.value }),
+      setAncho: (e) => this.setState({ cAncho: e.target.value }),
+      setAlto: (e) => this.setState({ cAlto: e.target.value }),
+      cotCompleto, cotIncompleto: !cotCompleto, cotPrecio, cotTitulo, cotEtiquetaPrecio,
+
+      texto: s.texto, setTexto: (e) => this.setState({ texto: e.target.value }),
+      fLargo: s.fLargo, fAncho: s.fAncho, fAlto: s.fAlto,
+      setFLargo: (e) => this.setState({ fLargo: e.target.value }),
+      setFAncho: (e) => this.setState({ fAncho: e.target.value }),
+      setFAlto: (e) => this.setState({ fAlto: e.target.value }),
+      orden: s.orden, setOrden: (e) => this.setState({ orden: e.target.value }),
+      filtrosCategoria, filtrosPrecio,
+      limpiar: () => this.setState({ texto:"", fLargo:"", fAncho:"", fAlto:"", categoria:null, rango:"todos" }),
+      resultados: resultados.map((p) => this.deco(p)),
+      hayResultados: resultados.length > 0,
+      sinResultados: resultados.length === 0,
+      resumen: hayFiltros
+        ? `${resultados.length} ${resultados.length === 1 ? "medida" : "medidas"}${hayMedidas ? " (±5 cm)" : ""}`
+        : `${PRODUCTOS.length} medidas disponibles`,
+      verFicha: () => this.go("ficha"),
+
+      fichaNombre: ficha.nombre,
+      fichaCategoria: ficha.categoria,
+      fichaDescripcion: "La más pedida para paquetería: autoarmable, cartón corrugado simple con solapas reforzadas. Se entrega plana y se arma sin cinta en la base. Podés pedirla con tu marca impresa a una o dos tintas.",
+      fichaMedidas: `${ficha.largo} × ${ficha.ancho} × ${ficha.alto} cm`,
+      fichaPrecio: fmt.format(unit),
+      tramos,
+      cantidad: s.cantidad,
+      menos: () => this.setState((st) => ({ cantidad: Math.max(10, st.cantidad - 10) })),
+      mas: () => this.setState((st) => ({ cantidad: st.cantidad + 10 })),
+      subtotal: fmt.format(unit * s.cantidad),
+      similares: PRODUCTOS.filter((p) => p.categoria === ficha.categoria || Math.abs(p.largo - ficha.largo) <= 10).filter((p) => p.id !== ficha.id).slice(0, 5).map((p) => this.deco(p)),
+    };
+  }
+}
+</script>
+</body>
+</html>

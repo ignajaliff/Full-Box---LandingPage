@@ -31,3 +31,21 @@ export async function createClient() {
     }
   )
 }
+
+/**
+ * Cliente sin cookies, para contextos que corren sin request HTTP
+ * (`generateStaticParams`, build time). Solo sirve para datos públicos:
+ * al no haber sesión, las queries corren como `anon` y el RLS decide.
+ */
+export function createStaticClient() {
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => [],
+        setAll: () => {},
+      },
+    }
+  )
+}

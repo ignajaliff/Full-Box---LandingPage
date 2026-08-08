@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 import { Navbar } from "@/features/landing/components/Navbar"
 import { Footer } from "@/features/landing/components/Footer"
@@ -20,24 +21,26 @@ export default async function ProductosPage() {
   return (
     <>
       <Navbar />
-      <main className="flex-1">
-        <section className="bg-white">
-          <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-6 py-14 text-center md:py-16">
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-              Todas las medidas existentes
-            </h1>
-            <p className="mx-auto max-w-2xl text-muted-foreground">
-              Buscá por largo, ancho y alto, o por tipo de caja. ¿No está la
-              medida que necesitás? La fabricamos a medida.
-            </p>
-          </div>
-        </section>
+      <main className="flex-1 bg-muted/30">
+        <div className="mx-auto max-w-[1280px] px-6 pb-3 pt-6 md:px-7">
+          <p className="mb-4 text-[12.5px] text-muted-foreground">
+            <Link href="/" className="transition-colors hover:text-foreground">
+              Inicio
+            </Link>{" "}
+            · Catálogo
+          </p>
+          <h1 className="mb-2 text-[38px] font-bold leading-tight tracking-tight">
+            Todas las medidas existentes
+          </h1>
+          <p className="max-w-[44em] text-[15px] text-muted-foreground">
+            Buscá por largo, ancho y alto, o por tipo de caja. ¿No está la
+            medida que necesitás? La fabricamos a medida.
+          </p>
+        </div>
 
-        <section>
-          <div className="mx-auto max-w-6xl px-6 py-12">
-            <CatalogoBuscador productos={productos} />
-          </div>
-        </section>
+        <div className="mx-auto max-w-[1280px] px-6 pb-20 pt-5 md:px-7">
+          <CatalogoBuscador productos={productos} />
+        </div>
       </main>
       <Footer />
     </>

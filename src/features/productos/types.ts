@@ -25,6 +25,41 @@ export function formatMedidas(p: Producto): string {
   return "Medidas a consultar"
 }
 
+/** Un tramo de compra por volumen: a más unidades, menor precio unitario. */
+export type TramoPrecio = {
+  desde: number
+  etiqueta: string
+  precioUnitario: number
+  descuento: number
+}
+
+/**
+ * Tramos de precio de un producto, según los descuentos cargados en la base.
+ * Devuelve [] si el producto no tiene precio.
+ */
+export function getTramos(p: Producto): TramoPrecio[] {
+  if (p.precio === null) return []
+  const base = p.precio
+  const min = p.unidad_minima
+
+  const escalones = [
+    { desde: min, descuento: 0 },
+    { desde: 100, descuento: p.desc_x100 },
+    { desde: 250, descuento: p.desc_x250 },
+    { desde: 500, descuento: p.desc_x500 },
+  ]
+
+  return escalones
+    // Si la unidad mínima supera un escalón, ese escalón no aplica.
+    .filter((e, i) => i === 0 || e.desde > min)
+    .map((e, i, arr) => ({
+      desde: e.desde,
+      etiqueta: i === arr.length - 1 ? `${e.desde}+ u.` : `${e.desde} u.`,
+      descuento: e.descuento,
+      precioUnitario: Math.round((base * (100 - e.descuento)) / 100),
+    }))
+}
+
 /**
  * Precio estimado de una caja a medida.
  * Base + cartón necesario (área de las 6 caras). Redondeo a $10.

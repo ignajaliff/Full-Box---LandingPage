@@ -1,4 +1,4 @@
-import { createClient } from "@/integrations/supabase/server"
+import { createClient, createStaticClient } from "@/integrations/supabase/server"
 import { type Producto } from "./types"
 
 /**
@@ -47,4 +47,44 @@ export async function getProductoBySlug(slug: string): Promise<Producto | null> 
 
   if (error) throw error
   return data
+}
+
+/**
+ * Productos parecidos a uno dado: misma categoría primero, después el resto,
+ * ordenados por cercanía de volumen. Para la sección "medidas parecidas".
+ */
+export async function getProductosSimilares(
+  producto: Producto,
+  limit = 5,
+): Promise<Producto[]> {
+  const todos = await getProductos()
+  const volumen = (p: Producto) =>
+    (p.largo ?? 0) * (p.ancho ?? 0) * (p.alto ?? 0)
+  const vBase = volumen(producto)
+
+  return todos
+    .filter((p) => p.id !== producto.id)
+    .sort((a, b) => {
+      const catA = a.categoria === producto.categoria ? 0 : 1
+      const catB = b.categoria === producto.categoria ? 0 : 1
+      if (catA !== catB) return catA - catB
+      return Math.abs(volumen(a) - vBase) - Math.abs(volumen(b) - vBase)
+    })
+    .slice(0, limit)
+}
+
+/**
+ * Slugs activos, para prerenderizar las fichas.
+ * Usa el cliente sin cookies: corre en build time, sin request.
+ */
+export async function getProductoSlugs(): Promise<string[]> {
+  const supabase = createStaticClient()
+  const { data, error } = await supabase
+    .from("productos")
+    .select("slug")
+    .eq("activo", true)
+    .not("slug", "is", null)
+
+  if (error) throw error
+  return (data ?? []).map((p) => p.slug).filter((s): s is string => Boolean(s))
 }
