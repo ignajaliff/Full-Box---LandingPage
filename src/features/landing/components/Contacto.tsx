@@ -1,9 +1,10 @@
-import { Clock, MapPin, Navigation, Phone } from "lucide-react"
+import { Clock, Mail, MapPin, MessageCircle, Navigation, Phone } from "lucide-react"
 
 import { Button } from "@/shared/components/ui/button"
-import { EMPRESA } from "../data/contenido"
+import { EMPRESA, linkWhatsApp } from "../data/contenido"
 
-const MAPA_QUERY = encodeURIComponent(`${EMPRESA.direccion}, ${EMPRESA.ciudad}`)
+const DIRECCION_COMPLETA = `${EMPRESA.direccion}, ${EMPRESA.ciudad}, ${EMPRESA.provincia}`
+const MAPA_QUERY = encodeURIComponent(DIRECCION_COMPLETA)
 const MAPA_EMBED = `https://www.google.com/maps?q=${MAPA_QUERY}&output=embed`
 const MAPA_LINK = `https://www.google.com/maps/dir/?api=1&destination=${MAPA_QUERY}`
 
@@ -16,8 +17,8 @@ export function Contacto() {
             Encontranos
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground">
-            Estamos en {EMPRESA.ciudad}. Acercate a la fábrica o escribinos:
-            te atendemos en el día.
+            Estamos en {EMPRESA.direccion}, {EMPRESA.ciudad}. Acercate a la
+            fábrica o escribinos: te atendemos en el día.
           </p>
         </div>
 
@@ -25,32 +26,56 @@ export function Contacto() {
           {/* Datos de contacto */}
           <div className="flex flex-col gap-4">
             <ul className="flex flex-col gap-4">
-              <ContactoItem icon={MapPin} label="Dirección" valor={EMPRESA.direccion} />
+              <ContactoItem
+                icon={MapPin}
+                label="Dirección"
+                valor={`${EMPRESA.direccion}, ${EMPRESA.ciudad}`}
+                href={MAPA_LINK}
+                externo
+              />
               <ContactoItem
                 icon={Phone}
                 label="Teléfono"
                 valor={EMPRESA.telefono}
-                href={`tel:${EMPRESA.telefono.replace(/\s|-/g, "")}`}
+                href={`tel:${EMPRESA.telefono.replace(/[\s-]/g, "")}`}
+              />
+              <ContactoItem
+                icon={Mail}
+                label="Email"
+                valor={EMPRESA.email}
+                href={`mailto:${EMPRESA.email}`}
               />
               <ContactoItem icon={Clock} label="Horario" valor={EMPRESA.horario} />
             </ul>
 
-            <Button
-              asChild
-              className="mt-2 w-fit bg-cardboard text-cardboard-foreground hover:bg-cardboard/90"
-            >
-              <a href={MAPA_LINK} target="_blank" rel="noopener noreferrer">
-                <Navigation className="size-4" aria-hidden />
-                Cómo llegar
-              </a>
-            </Button>
+            <div className="mt-2 flex flex-wrap gap-3">
+              <Button
+                asChild
+                className="bg-cardboard text-cardboard-foreground hover:bg-cardboard/90"
+              >
+                <a href={MAPA_LINK} target="_blank" rel="noopener noreferrer">
+                  <Navigation className="size-4" aria-hidden />
+                  Cómo llegar
+                </a>
+              </Button>
+              <Button asChild variant="outline">
+                <a
+                  href={linkWhatsApp("¡Hola! Quiero hacer una consulta.")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="size-4" aria-hidden />
+                  Escribinos
+                </a>
+              </Button>
+            </div>
           </div>
 
           {/* Mapa */}
           <div className="overflow-hidden rounded-xl border">
             <iframe
               src={MAPA_EMBED}
-              title={`Ubicación de ${EMPRESA.nombre} en ${EMPRESA.ciudad}`}
+              title={`Ubicación de ${EMPRESA.nombre} en ${DIRECCION_COMPLETA}`}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               className="h-full min-h-[300px] w-full"
@@ -67,11 +92,14 @@ function ContactoItem({
   label,
   valor,
   href,
+  externo = false,
 }: {
   icon: typeof Phone
   label: string
   valor: string
   href?: string
+  /** Abre en pestaña nueva (mapas). tel:/mailto: no lo necesitan. */
+  externo?: boolean
 }) {
   const contenido = (
     <>
@@ -92,6 +120,7 @@ function ContactoItem({
       {href ? (
         <a
           href={href}
+          {...(externo && { target: "_blank", rel: "noopener noreferrer" })}
           className="flex items-center gap-3 rounded-lg transition-opacity hover:opacity-70"
         >
           {contenido}

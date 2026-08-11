@@ -27,6 +27,7 @@ Plantilla base para iniciar ecommerce con Next.js 16 + Supabase + Mercado Pago, 
 | `naming-rules.txt` | Convenciones de nombres | Sí, a `ai-pmp/` |
 | `git-rules.txt` | Commits, ramas y .gitignore | Sí, a `ai-pmp/` |
 | `nuvvora-prompts.txt` | Prompts base para cada etapa | No — es para uso humano |
+| `deploy-caprover.md` | Receta de deploy en CapRover y sus trampas conocidas | No — se leen y se adaptan los 3 archivos de deploy |
 
 ## Diferencias clave respecto al kit de React + Vite
 
@@ -39,6 +40,7 @@ Si venís del kit de Vite, esto es lo que cambia de fondo:
 * **Variables de entorno**: prefijo `NEXT_PUBLIC_` (no `VITE_`). Los secretos van SIN prefijo.
 * **SEO real**: ISR + `generateStaticParams` + `generateMetadata` para el catálogo. Esto es lo que justifica usar Next para un ecommerce.
 * **Pagos**: el total se calcula en el server y el webhook de Mercado Pago se valida por firma y se re-consulta. Es la parte más delicada del sistema.
+* **Deploy**: Vite genera estáticos y se sirve con Nginx; Next necesita un **servidor Node corriendo**. En CapRover eso significa `captain-definition` + `Dockerfile`, no una carpeta `dist/`. Ver [deploy-caprover.md](deploy-caprover.md) antes del primer deploy — hay trampas que cuestan un 502 en producción.
 
 ## Mantenimiento del kit
 
@@ -46,4 +48,5 @@ Si venís del kit de Vite, esto es lo que cambia de fondo:
 * Revisar la sección de stack de `rules.txt` cuando cambien las versiones (Next, Supabase SSR, SDK de Mercado Pago) y anotar la fecha.
 * Verificar periódicamente que el patrón de validación del webhook de Mercado Pago sigue vigente en su doc oficial.
 * Última revisión general del kit: 2026-06-17 (Next.js 16.2, @supabase/ssr, Mercado Pago Checkout Pro).
+* `deploy-caprover.md` agregado el 2026-08-11 tras el deploy de Full Box (Next.js 16.2.9, node:22-alpine).
 ```

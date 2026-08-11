@@ -1,19 +1,23 @@
 /**
- * Contenido del boceto (placeholder).
- * TODO Full Box: reemplazar por datos reales antes de publicar.
- * Centralizado a propósito: editás acá y se actualiza toda la home.
+ * Contenido de la landing. Centralizado a propósito: editás acá y se
+ * actualiza toda la página.
+ *
+ * Los datos de EMPRESA son reales (ficha de Google / Facebook de Full Box SAS,
+ * ex Cartonera Oeste). Si cambian, se editan sólo acá.
  */
 
 export const EMPRESA = {
   nombre: "Full Box",
+  razonSocial: "Full Box S.A.S.",
   tagline: "Cajas y packaging a medida",
-  ciudad: "Mendoza, Argentina",
+  ciudad: "Ciudad de Mendoza",
+  provincia: "Mendoza, Argentina",
   // Sin el "+" ni espacios: formato que pide wa.me. 549 + cód. área (261) + número.
-  whatsapp: "5492610000000",
-  telefono: "+54 261 000-0000",
-  email: "ventas@fullbox.com.ar",
-  direccion: "Parque Industrial, Mendoza",
-  horario: "Lun a Vie de 8 a 17 hs",
+  whatsapp: "5492615333368",
+  telefono: "+54 261 533-3368",
+  email: "cartoneraoeste@hotmail.com",
+  direccion: "Montecaseros 2030",
+  horario: "Lunes a viernes de 9 a 17 hs",
 } as const
 
 /** Arma un link a WhatsApp con mensaje pre-cargado. */

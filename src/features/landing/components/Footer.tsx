@@ -16,15 +16,17 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         {/* Marca */}
         <div className="flex flex-col gap-4">
+          {/* self-start es necesario: el padre es flex-col y su align-items
+              por defecto (stretch) estira la imagen a lo ancho de la columna. */}
           <Image
-            src="/logocolorcaja.png"
+            src="/logogrisoscuro.png"
             alt={EMPRESA.nombre}
             width={597}
             height={294}
-            className="h-12 w-auto"
+            className="h-9 w-auto self-start"
           />
           <p className="max-w-xs text-sm text-muted-foreground">
-            {EMPRESA.tagline} en {EMPRESA.ciudad}. Más de 30 años fabricando
+            {EMPRESA.tagline} en {EMPRESA.provincia}. Más de 30 años fabricando
             packaging resistente y prolijo.
           </p>
         </div>
@@ -49,7 +51,7 @@ export function Footer() {
           <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
             <li className="flex items-start gap-2.5">
               <MapPin className="mt-0.5 size-4 shrink-0 text-cardboard" aria-hidden />
-              {EMPRESA.direccion}
+              {EMPRESA.direccion}, {EMPRESA.ciudad}
             </li>
             <li className="flex items-start gap-2.5">
               <Phone className="mt-0.5 size-4 shrink-0 text-cardboard" aria-hidden />
