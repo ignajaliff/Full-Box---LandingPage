@@ -54,11 +54,17 @@ RUN npm run build
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
+# Puerto 80 = el "Container HTTP Port" que CapRover usa por defecto.
+# Así no hace falta tocar nada en la config de la app.
+ENV PORT=80
 ENV HOSTNAME=0.0.0.0
 
-# Usuario sin privilegios
-RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+# Usuario sin privilegios + permiso puntual para escuchar en el puerto 80
+# (por defecto sólo root puede usar puertos < 1024).
+RUN addgroup -g 1001 -S nodejs \
+ && adduser -S nextjs -u 1001 -G nodejs \
+ && apk add --no-cache libcap \
+ && setcap 'cap_net_bind_service=+ep' /usr/local/bin/node
 
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
@@ -69,7 +75,13 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
+# Con revalidate (ISR) Next escribe páginas regeneradas en .next/cache.
+# Sin esto los archivos quedan de root y el proceso no puede escribir.
+RUN mkdir -p .next/cache && chown -R nextjs:nodejs /app
+
 USER nextjs
 
-EXPOSE 3000
-CMD ["npm", "run", "start"]
+EXPOSE 80
+# Binario directo en vez de `npm run start`: npm no propaga bien SIGTERM
+# y el contenedor tardaría en frenar en cada redeploy.
+CMD ["node_modules/.bin/next", "start"]
