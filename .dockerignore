@@ -1,0 +1,37 @@
+# Se reinstalan dentro de la imagen
+node_modules
+.next
+out
+build
+
+# Secretos: NUNCA deben entrar a la imagen.
+# Las credenciales llegan por build args / env vars de CapRover.
+.env
+.env.*
+!.env.example
+
+# Control de versiones y editor
+.git
+.gitignore
+.vscode
+.idea
+
+# Documentación y bocetos: no hacen falta para correr la app
+*.md
+!README.md
+ai-pmp
+KNOW - HOW NextJS Ecommerce
+*.dc.html
+
+# Imágenes fuente sueltas en la raíz (las que usa la app viven en public/)
+/ejemplohero1.png
+/ejemplofondoherosinfondo.png
+/imagen producto ejemplo.png
+/logocolorcaja.png
+/logocajahero.png
+/logofullbox.png
+
+# Varios
+npm-debug.log*
+Dockerfile
+.dockerignore
