@@ -10,14 +10,18 @@ import { formatCurrency } from "@/lib/format-currency"
 const TOLERANCIA = 5
 
 const inputClass =
-  "h-[42px] w-full rounded-[10px] border bg-muted/40 px-3 text-sm outline-none transition-colors focus-visible:border-cardboard focus-visible:ring-[3px] focus-visible:ring-cardboard/20"
+  "h-[42px] w-full rounded-[10px] border bg-muted/40 px-3 text-sm outline-none transition-colors focus-visible:border-acento focus-visible:ring-[3px] focus-visible:ring-acento/20"
 
 type Orden = "nombre" | "precio-asc" | "precio-desc" | "volumen"
 
-type Props = { productos: Producto[] }
+type Props = {
+  productos: Producto[]
+  /** Término inicial: viene del buscador del header vía `?q=`. */
+  busquedaInicial?: string
+}
 
-export function CatalogoBuscador({ productos }: Props) {
-  const [texto, setTexto] = useState("")
+export function CatalogoBuscador({ productos, busquedaInicial = "" }: Props) {
+  const [texto, setTexto] = useState(busquedaInicial)
   const [largo, setLargo] = useState("")
   const [ancho, setAncho] = useState("")
   const [alto, setAlto] = useState("")
@@ -210,7 +214,7 @@ export function CatalogoBuscador({ productos }: Props) {
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
               placeholder="Buscar: vino, e-commerce, mudanza…"
-              className="h-9 w-full max-w-xs rounded-[10px] border bg-muted/40 px-3 text-sm outline-none transition-colors focus-visible:border-cardboard focus-visible:ring-[3px] focus-visible:ring-cardboard/20"
+              className="h-9 w-full max-w-xs rounded-[10px] border bg-muted/40 px-3 text-sm outline-none transition-colors focus-visible:border-acento focus-visible:ring-[3px] focus-visible:ring-acento/20"
             />
           </label>
 
@@ -221,7 +225,7 @@ export function CatalogoBuscador({ productos }: Props) {
             <select
               value={orden}
               onChange={(e) => setOrden(e.target.value as Orden)}
-              className="h-[38px] rounded-[10px] border bg-muted/40 px-3 text-[13.5px] outline-none transition-colors focus-visible:border-cardboard"
+              className="h-[38px] rounded-[10px] border bg-muted/40 px-3 text-[13.5px] outline-none transition-colors focus-visible:border-acento"
             >
               <option value="nombre">Nombre</option>
               <option value="precio-asc">Precio: menor a mayor</option>
@@ -271,7 +275,7 @@ function Chip({
       onClick={onClick}
       className={`flex h-[38px] w-full items-center justify-between gap-2 rounded-[10px] border px-3.5 text-left text-[13.5px] transition-colors ${
         activo
-          ? "border-cardboard bg-cardboard/10 font-semibold"
+          ? "border-acento bg-acento-soft font-semibold text-acento"
           : "font-medium hover:bg-muted"
       }`}
     >

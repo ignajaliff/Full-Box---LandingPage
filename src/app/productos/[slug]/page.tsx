@@ -92,7 +92,7 @@ export default async function ProductoPage({ params }: Props) {
             </div>
             {/* TODO Full Box: fotos adicionales por producto */}
             <div className="grid grid-cols-4 gap-3">
-              <div className="flex aspect-square items-center justify-center rounded-[14px] border-2 border-cardboard bg-card p-3">
+              <div className="flex aspect-square items-center justify-center rounded-[14px] border-2 border-acento bg-card p-3">
                 <Image
                   src={producto.imagen_url ?? "/producto-ejemplo.png"}
                   alt=""
@@ -169,7 +169,7 @@ export default async function ProductoPage({ params }: Props) {
                 key={item.paso}
                 className="flex flex-col gap-2 rounded-[18px] border bg-card p-6"
               >
-                <span className="text-[26px] font-extrabold tracking-tight text-cardboard">
+                <span className="text-[26px] font-extrabold tracking-tight text-acento">
                   {item.paso}
                 </span>
                 <h3 className="text-[15px] font-semibold">{item.titulo}</h3>

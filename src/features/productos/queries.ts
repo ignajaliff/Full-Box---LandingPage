@@ -35,6 +35,48 @@ export async function getProductosDestacados(limit = 4): Promise<Producto[]> {
   return data ?? []
 }
 
+/** Una categoría del catálogo, con sus productos, para el mega-menú del header. */
+export type CategoriaMenu = {
+  nombre: string
+  cantidad: number
+  productos: Pick<Producto, "id" | "nombre" | "slug" | "medida">[]
+}
+
+/**
+ * Categorías reales del catálogo con una muestra de productos de cada una.
+ * Alimenta el panel desplegable de la navegación.
+ */
+export async function getCategoriasMenu(
+  porCategoria = 6,
+): Promise<CategoriaMenu[]> {
+  const productos = await getProductos()
+
+  const mapa = new Map<string, CategoriaMenu>()
+  for (const producto of productos) {
+    const nombre = producto.categoria?.trim()
+    if (!nombre) continue
+
+    let categoria = mapa.get(nombre)
+    if (!categoria) {
+      categoria = { nombre, cantidad: 0, productos: [] }
+      mapa.set(nombre, categoria)
+    }
+
+    categoria.cantidad += 1
+    // El contador cuenta todo; la lista se corta para que el panel no crezca.
+    if (categoria.productos.length < porCategoria) {
+      categoria.productos.push({
+        id: producto.id,
+        nombre: producto.nombre,
+        slug: producto.slug,
+        medida: producto.medida,
+      })
+    }
+  }
+
+  return [...mapa.values()].sort((a, b) => b.cantidad - a.cantidad)
+}
+
 /** Detalle por slug. Devuelve null si no existe (la página decide el notFound()). */
 export async function getProductoBySlug(slug: string): Promise<Producto | null> {
   const supabase = await createClient()

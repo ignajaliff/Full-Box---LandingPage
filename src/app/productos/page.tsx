@@ -15,8 +15,12 @@ export const metadata: Metadata = {
 /** Revalida cada 5 min: los cambios del sistema de gestión se reflejan solos. */
 export const revalidate = 300
 
-export default async function ProductosPage() {
-  const productos = await getProductos()
+export default async function ProductosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
+  const [productos, { q }] = await Promise.all([getProductos(), searchParams])
 
   return (
     <>
@@ -39,7 +43,13 @@ export default async function ProductosPage() {
         </div>
 
         <div className="mx-auto max-w-[1280px] px-6 pb-20 pt-5 md:px-7">
-          <CatalogoBuscador productos={productos} />
+          {/* key: al cambiar `?q=` se remonta el buscador para que el estado
+              interno tome el término nuevo. */}
+          <CatalogoBuscador
+            key={q ?? ""}
+            productos={productos}
+            busquedaInicial={q ?? ""}
+          />
         </div>
       </main>
       <Footer />

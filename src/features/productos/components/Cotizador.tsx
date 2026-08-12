@@ -137,7 +137,7 @@ function ResultadoExacto({ producto }: { producto: Producto }) {
           </div>
         )}
       </div>
-      <Button asChild className="mt-4 bg-cardboard text-cardboard-foreground hover:bg-cardboard/90">
+      <Button asChild className="mt-4 bg-acento text-acento-foreground hover:bg-acento/90">
         <a
           href={linkWhatsApp(
             `¡Hola! Quiero pedir la ${producto.nombre} (${formatMedidas(producto)}).`,
@@ -179,7 +179,7 @@ function ResultadoMedida({
             </span>
             <span className="ml-1 text-xs text-muted-foreground">/ unidad aprox.</span>
           </div>
-          <Button asChild className="bg-cardboard text-cardboard-foreground hover:bg-cardboard/90">
+          <Button asChild className="bg-acento text-acento-foreground hover:bg-acento/90">
             <a
               href={linkWhatsApp(
                 `¡Hola! Quiero cotizar una caja a medida de ${medidas}. Vi un estimado de ${formatCurrency(precio)}.`,

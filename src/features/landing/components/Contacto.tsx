@@ -10,13 +10,16 @@ const MAPA_LINK = `https://www.google.com/maps/dir/?api=1&destination=${MAPA_QUE
 
 export function Contacto() {
   return (
-    <section id="contacto" className="bg-white">
-      <div className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mb-12 flex flex-col items-center gap-5 text-center">
-          <h2 className="text-4xl font-bold tracking-tight md:text-5xl">
+    <section id="contacto" className="bg-background">
+      <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
+        <div className="mb-12 flex flex-col items-center gap-4 text-center">
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-acento">
+            Contacto
+          </span>
+          <h2 className="text-balance text-4xl font-extrabold tracking-tight md:text-5xl">
             Encontranos
           </h2>
-          <p className="mx-auto max-w-2xl text-muted-foreground">
+          <p className="mx-auto max-w-2xl text-pretty text-muted-foreground">
             Estamos en {EMPRESA.direccion}, {EMPRESA.ciudad}. Acercate a la
             fábrica o escribinos: te atendemos en el día.
           </p>
@@ -51,7 +54,7 @@ export function Contacto() {
             <div className="mt-2 flex flex-wrap gap-3">
               <Button
                 asChild
-                className="bg-cardboard text-cardboard-foreground hover:bg-cardboard/90"
+                className="bg-acento text-acento-foreground hover:bg-acento/90"
               >
                 <a href={MAPA_LINK} target="_blank" rel="noopener noreferrer">
                   <Navigation className="size-4" aria-hidden />

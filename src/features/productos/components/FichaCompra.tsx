@@ -41,7 +41,7 @@ export function FichaCompra({ producto }: { producto: Producto }) {
             / unidad + IVA
           </span>
           {tramoActivo && tramoActivo.descuento > 0 && (
-            <span className="rounded-full bg-cardboard px-2.5 py-1 text-[11px] font-semibold text-cardboard-foreground">
+            <span className="rounded-full bg-acento px-2.5 py-1 text-[11px] font-semibold text-acento-foreground">
               −{tramoActivo.descuento}%
             </span>
           )}
@@ -119,7 +119,7 @@ export function FichaCompra({ producto }: { producto: Producto }) {
           href={linkWhatsApp(mensaje)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-[52px] flex-1 items-center justify-center gap-2.5 rounded-[14px] bg-cardboard px-4 text-[15px] font-semibold text-cardboard-foreground transition-opacity hover:opacity-90"
+          className="inline-flex h-[52px] flex-1 items-center justify-center gap-2.5 rounded-[14px] bg-acento px-4 text-[15px] font-semibold text-acento-foreground transition-opacity hover:opacity-90"
         >
           <MessageCircle className="size-[17px] shrink-0" aria-hidden />
           <span className="truncate">

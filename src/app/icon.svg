@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Favicon: F y B escalonadas como en el logotipo de Full Box.
+    Dibujadas con paths (no texto) para controlar el encastre: el brazo
+    inferior de la F llega hasta el lomo de la B y lo toca.
+  -->
+  <rect width="64" height="64" rx="14" fill="#333333"/>
+
+  <!--
+    F en cartón. Lomo vertical + brazo superior + brazo medio.
+    El brazo medio se estira hasta x=34, donde arranca la B.
+    Tono aclarado respecto del acento: sobre charcoal el #A97538 se apaga.
+  -->
+  <g fill="#CF9A54">
+    <rect x="13" y="12" width="7" height="27" />
+    <rect x="13" y="12" width="20" height="7" />
+    <rect x="13" y="24" width="21" height="7" />
+  </g>
+
+  <!--
+    B en blanco, apoyada donde termina el brazo medio de la F.
+    Lomo + dos panzas formadas por arcos.
+  -->
+  <g fill="#FFFFFF">
+    <rect x="30" y="24" width="7" height="28" />
+    <path d="M37 24h6a7 7 0 0 1 0 14h-6v-6h5a1 1 0 0 0 0-2h-5z" />
+    <path d="M37 38h7a7 7 0 0 1 0 14h-7v-6h6a1 1 0 0 0 0-2h-6z" />
+  </g>
+</svg>

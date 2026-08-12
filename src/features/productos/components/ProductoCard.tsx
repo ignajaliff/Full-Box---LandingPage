@@ -20,7 +20,7 @@ export function ProductoCard({ producto }: { producto: Producto }) {
           className="max-h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
         />
         {producto.categoria && (
-          <span className="absolute left-3 top-3 rounded-full border bg-background px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+          <span className="absolute left-3 top-3 rounded-full bg-acento-soft px-2.5 py-1 text-[11px] font-semibold text-acento">
             {producto.categoria}
           </span>
         )}
@@ -48,7 +48,7 @@ export function ProductoCard({ producto }: { producto: Producto }) {
             )}
           </span>
           {href && (
-            <span className="inline-flex h-9 items-center justify-center rounded-full bg-cardboard px-4 text-xs font-semibold text-cardboard-foreground transition-opacity group-hover:opacity-90">
+            <span className="inline-flex h-9 items-center justify-center rounded-full bg-acento px-4 text-xs font-semibold text-acento-foreground transition-opacity group-hover:opacity-90">
               Ver
             </span>
           )}
@@ -58,7 +58,7 @@ export function ProductoCard({ producto }: { producto: Producto }) {
   )
 
   const clases =
-    "group flex flex-col overflow-hidden rounded-2xl border bg-card text-card-foreground transition-all duration-300 hover:border-cardboard/40 hover:shadow-lg"
+    "group flex flex-col overflow-hidden rounded-2xl border bg-card text-card-foreground transition-all duration-300 hover:border-acento/40 hover:shadow-lg"
 
   return (
     <li className="contents">

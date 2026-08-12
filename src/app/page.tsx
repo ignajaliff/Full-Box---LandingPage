@@ -1,8 +1,8 @@
 import { Navbar } from "@/features/landing/components/Navbar"
 import { Hero } from "@/features/landing/components/Hero"
-import { CatalogoDestacado } from "@/features/landing/components/CatalogoDestacado"
 import { Fabrica } from "@/features/landing/components/Fabrica"
 import { Clientes } from "@/features/landing/components/Clientes"
+import { Faq } from "@/features/landing/components/Faq"
 import { Contacto } from "@/features/landing/components/Contacto"
 import { Footer } from "@/features/landing/components/Footer"
 
@@ -15,9 +15,9 @@ export default function HomePage() {
       <Navbar />
       <main className="flex-1">
         <Hero />
-        <CatalogoDestacado />
         <Fabrica />
         <Clientes />
+        <Faq />
         <Contacto />
       </main>
       <Footer />
