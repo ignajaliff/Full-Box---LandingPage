@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react"
 
-import { CajaAnimada } from "./CajaAnimada"
+import { LogoTrazo } from "./LogoTrazo"
 
 /**
- * Tiempos de la pantalla. La animación del SVG dura 2.2s; los 300 ms extra
- * dejan ver el dibujo terminado un instante antes de que empiece la salida.
+ * Tiempos de la pantalla. El último trazo del logotipo termina cerca de los
+ * 1.4 s; los ~350 ms extra dejan verlo completo un instante antes de que
+ * empiece la salida.
  */
-const DURACION_MS = 2500
+const DURACION_MS = 1750
 /** El dibujo se va primero y rápido, para que no se lo vea encimado. */
 const SALIDA_CAJA_MS = 250
 /** Y recién después se levanta el telón de fondo. */
@@ -55,13 +56,15 @@ export function PantallaCarga() {
       }}
     >
       <div
-        className={`flex h-full items-center justify-center transition-all ease-out ${
+        className={`flex h-full flex-col items-center justify-center gap-5 transition-all ease-out ${
           saliendo ? "scale-95 opacity-0" : "scale-100 opacity-100"
         }`}
         style={{ transitionDuration: `${SALIDA_CAJA_MS}ms` }}
       >
-        {/* El "FULL BOX" es parte del SVG: se escribe mientras se dibuja la caja. */}
-        <CajaAnimada className="w-64 md:w-80" />
+        {/* El logotipo se dibuja trazo por trazo: es toda la pantalla.
+            #383b3e es el gris exacto del PNG de la marca (logogrisoscuro),
+            el mismo que se ve en el header. */}
+        <LogoTrazo className="w-64 text-[#383b3e] md:w-80" />
       </div>
     </div>
   )
