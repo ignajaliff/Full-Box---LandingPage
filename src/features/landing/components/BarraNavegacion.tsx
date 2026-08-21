@@ -2,13 +2,40 @@
 
 import Link from "next/link"
 import { useRef, useState } from "react"
-import { ArrowRight, ChevronDown, Flame } from "lucide-react"
+import { ArrowRight, ChevronDown, Flame, Sparkles } from "lucide-react"
 
 import { type CategoriaMenu } from "@/features/productos/queries"
 
+/** Un item del submenú desplegable. */
+type SubItem = { label: string; href: string }
+
+type Entrada = {
+  id: string
+  label: string
+  href: string
+  /** Ícono de "lo más vendido". */
+  icono?: boolean
+  /** Ícono de diferencial: producto que casi nadie fabrica. */
+  destacado?: boolean
+  /** Submenú simple (links fijos). */
+  items?: SubItem[]
+  /** Mega-menú alimentado por el catálogo real de Supabase. */
+  categorias?: CategoriaMenu[]
+}
+
+/** Link al catálogo filtrado por término de búsqueda. */
+const buscar = (q: string) => `/productos?q=${encodeURIComponent(q)}`
+
+const INSUMOS: SubItem[] = [
+  { label: "Cinta", href: buscar("cinta") },
+  { label: "Papeles (Bobina / Resma / Rollo)", href: buscar("papel") },
+  { label: "Planchas y Esquineros", href: buscar("plancha") },
+  { label: "Protección de Embalaje", href: buscar("protección") },
+]
+
 /**
- * Navegación con mega-menú. Las entradas con `categorias` despliegan un panel
- * ancho al pasar el mouse o al enfocar con teclado; el resto son links sueltos.
+ * Navegación con desplegables. "Cajas" usa el mega-menú alimentado por el
+ * catálogo real; el resto son submenús de links fijos.
  */
 export function BarraNavegacion({ categorias }: { categorias: CategoriaMenu[] }) {
   const [abierto, setAbierto] = useState<string | null>(null)
@@ -28,12 +55,29 @@ export function BarraNavegacion({ categorias }: { categorias: CategoriaMenu[] })
 
   const entradas: Entrada[] = [
     { id: "vendido", label: "Lo más vendido", href: "/productos", icono: true },
-    { id: "cajas", label: "Cajas de cartón", href: "/productos", categorias },
-    { id: "medida", label: "Cajas a medida", href: "/#fabrica" },
-    { id: "catalogo", label: "Catálogo completo", href: "/productos" },
-    { id: "nosotros", label: "Nosotros", href: "/#clientes" },
-    { id: "encontranos", label: "Dónde encontrarnos", href: "/#contacto" },
-    { id: "faq", label: "Preguntas frecuentes", href: "/#faq" },
+    {
+      id: "cajas",
+      label: "Cajas",
+      href: "/productos",
+      items: [
+        { label: "Corrugado", href: buscar("corrugado") },
+        { label: "Simple", href: buscar("simple") },
+      ],
+      categorias,
+    },
+    {
+      id: "forradas",
+      label: "Cajas forradas a medida",
+      href: "/#fabrica",
+      destacado: true,
+    },
+    {
+      id: "insumos",
+      label: "Insumos para embalaje",
+      href: "/productos",
+      items: INSUMOS,
+    },
+    { id: "bolsas", label: "Bolsas papel/kraft", href: buscar("bolsa") },
     { id: "contacto", label: "Contacto", href: "/#contacto" },
   ]
 
@@ -44,7 +88,8 @@ export function BarraNavegacion({ categorias }: { categorias: CategoriaMenu[] })
     >
       <div className="mx-auto flex max-w-7xl items-center justify-center px-6">
         {entradas.map((entrada) => {
-          const desplegable = (entrada.categorias?.length ?? 0) > 0
+          const desplegable =
+            (entrada.items?.length ?? 0) > 0 || (entrada.categorias?.length ?? 0) > 0
           const activo = abierto === entrada.id
 
           return (
@@ -65,6 +110,9 @@ export function BarraNavegacion({ categorias }: { categorias: CategoriaMenu[] })
                 {entrada.icono && (
                   <Flame className="size-3.5 text-acento" aria-hidden />
                 )}
+                {entrada.destacado && (
+                  <Sparkles className="size-3.5 text-acento" aria-hidden />
+                )}
                 {entrada.label}
                 {desplegable && (
                   <ChevronDown
@@ -78,32 +126,75 @@ export function BarraNavegacion({ categorias }: { categorias: CategoriaMenu[] })
         })}
       </div>
 
-      {entradas.map((entrada) =>
-        (entrada.categorias?.length ?? 0) > 0 && abierto === entrada.id ? (
-          <PanelCategorias
-            key={entrada.id}
-            categorias={entrada.categorias!}
-            onMouseEnter={() => abrir(entrada.id)}
-          />
-        ) : null,
-      )}
+      {entradas.map((entrada) => {
+        if (abierto !== entrada.id) return null
+
+        // "Cajas" combina sus tipos fijos con las categorías del catálogo.
+        if ((entrada.categorias?.length ?? 0) > 0) {
+          return (
+            <PanelCategorias
+              key={entrada.id}
+              items={entrada.items}
+              categorias={entrada.categorias!}
+              onMouseEnter={() => abrir(entrada.id)}
+            />
+          )
+        }
+
+        if ((entrada.items?.length ?? 0) > 0) {
+          return (
+            <PanelSimple
+              key={entrada.id}
+              items={entrada.items!}
+              onMouseEnter={() => abrir(entrada.id)}
+            />
+          )
+        }
+
+        return null
+      })}
     </nav>
   )
 }
 
-type Entrada = {
-  id: string
-  label: string
-  href: string
-  icono?: boolean
-  categorias?: CategoriaMenu[]
+/** Desplegable de links fijos (insumos para embalaje). */
+function PanelSimple({
+  items,
+  onMouseEnter,
+}: {
+  items: SubItem[]
+  onMouseEnter: () => void
+}) {
+  return (
+    <div
+      onMouseEnter={onMouseEnter}
+      className="absolute inset-x-0 top-full z-40 px-6"
+    >
+      <div className="mx-auto w-fit animate-in fade-in slide-in-from-top-1 rounded-b-2xl border border-t-0 bg-background p-4 shadow-xl duration-150">
+        <ul className="flex min-w-56 flex-col gap-0.5">
+          {items.map((item) => (
+            <li key={item.label}>
+              <Link
+                href={item.href}
+                className="block rounded-lg px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-crema hover:text-acento"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
 }
 
-/** Panel desplegable: una columna por categoría con sus productos. */
+/** Panel de "Cajas": tipos fijos + una columna por categoría del catálogo. */
 function PanelCategorias({
+  items,
   categorias,
   onMouseEnter,
 }: {
+  items?: SubItem[]
   categorias: CategoriaMenu[]
   onMouseEnter: () => void
 }) {
@@ -115,6 +206,27 @@ function PanelCategorias({
       {/* Tarjeta contenida: se apoya bajo la nav sin ocupar todo el ancho. */}
       <div className="mx-auto w-fit max-w-5xl animate-in fade-in slide-in-from-top-1 rounded-b-2xl border border-t-0 bg-background p-6 shadow-xl duration-150">
         <div className="flex flex-wrap gap-x-10 gap-y-6">
+          {/* Tipo de cartón: la división principal del rubro. */}
+          {items && items.length > 0 && (
+            <div className="flex min-w-40 flex-col gap-2.5">
+              <h3 className="border-b pb-2 text-[12px] font-semibold uppercase tracking-wide">
+                Tipo de cartón
+              </h3>
+              <ul className="flex flex-col gap-1.5">
+                {items.map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="text-[13px] text-muted-foreground transition-colors hover:text-acento"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {categorias.slice(0, 3).map((categoria) => (
             <div key={categoria.nombre} className="flex min-w-44 flex-col gap-2.5">
               <h3 className="flex items-baseline gap-2 border-b pb-2 text-[12px] font-semibold uppercase tracking-wide">
