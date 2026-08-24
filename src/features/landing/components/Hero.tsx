@@ -40,7 +40,7 @@ export async function Hero() {
               className="max-w-sm animate-in fade-in slide-in-from-bottom-4 text-pretty text-[13px] leading-relaxed text-muted-foreground duration-700 sm:text-sm md:text-base"
               style={{ animationDelay: "160ms" }}
             >
-              Más de 30 años fabricando packaging resistente y prolijo, con tu
+              Más de 50 años fabricando packaging resistente y prolijo, con tu
               marca impresa.
             </p>
 

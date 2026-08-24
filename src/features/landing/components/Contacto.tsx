@@ -37,10 +37,17 @@ export function Contacto() {
                 externo
               />
               <ContactoItem
-                icon={Phone}
-                label="Teléfono"
+                icon={MessageCircle}
+                label="Teléfono WhatsApp"
                 valor={EMPRESA.telefono}
-                href={`tel:${EMPRESA.telefono.replace(/[\s-]/g, "")}`}
+                href={linkWhatsApp("¡Hola! Quiero hacer una consulta.")}
+                externo
+              />
+              <ContactoItem
+                icon={Phone}
+                label="Teléfono fijo"
+                valor={EMPRESA.telefonoFijo}
+                href={`tel:+54${EMPRESA.telefonoFijo.replace(/[\s-]/g, "")}`}
               />
               <ContactoItem
                 icon={Mail}

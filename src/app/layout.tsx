@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Full Box — Cajas y packaging a medida",
     description:
-      "Más de 30 años fabricando packaging de cartón en Mendoza. Cajas a medida, con tu marca impresa.",
+      "Más de 50 años fabricando packaging de cartón en Mendoza. Cajas a medida, con tu marca impresa.",
     type: "website",
     locale: "es_AR",
   },

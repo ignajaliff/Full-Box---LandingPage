@@ -14,7 +14,8 @@ export const EMPRESA = {
   provincia: "Mendoza, Argentina",
   // Sin el "+" ni espacios: formato que pide wa.me. 549 + cód. área (261) + número.
   whatsapp: "5492615333368",
-  telefono: "+54 261 533-3368",
+  telefono: "2615333368",
+  telefonoFijo: "2614235270",
   email: "cartoneraoeste@hotmail.com",
   direccion: "Montecaseros 2030",
   horario: "Lunes a viernes de 9 a 17 hs",
@@ -34,8 +35,8 @@ export const ANUNCIOS = [
   "Retiro en sucursal en 24/48 hs",
   "Cartón 100% natural y reciclable",
   "Fabricación a medida sin cargo de diseño",
-  "Más de 30 años en Mendoza",
-  "Envíos a toda la provincia y el país",
+  "Más de 50 años en Mendoza",
+  "Coordinamos el envío con tu transporte de confianza",
 ] as const
 
 /**
@@ -43,7 +44,7 @@ export const ANUNCIOS = [
  * TODO Full Box: confirmar cantidad de clientes y plazo real de entrega.
  */
 export const STATS = [
-  { valor: "+30", etiqueta: "años de trayectoria" },
+  { valor: "+50", etiqueta: "años de trayectoria" },
   { valor: "+500", etiqueta: "clientes activos" },
   { valor: "72 hs", etiqueta: "plazo de entrega" },
   { valor: "A medida", etiqueta: "lo desarrollamos para vos" },
@@ -68,8 +69,8 @@ export const PROCESO = [
   },
   {
     paso: "04",
-    titulo: "Entregamos a tiempo",
-    texto: "Logística a toda la provincia y el país.",
+    titulo: "Retirás o lo despachamos",
+    texto: "Retiro en fábrica, o lo coordinamos con el transporte que elijas.",
   },
 ] as const
 
@@ -99,9 +100,9 @@ export const FAQ = [
       "Es lo que más hacemos. Contanos qué producto vas a embalar y diseñamos la caja exacta, sin cargo extra por el diseño.",
   },
   {
-    pregunta: "¿Hacen envíos fuera de Mendoza?",
+    pregunta: "¿Hacen envío?",
     respuesta:
-      "Sí, enviamos a toda la provincia y al resto del país. El costo depende del destino y del volumen del pedido.",
+      "Sí, coordinamos con el servicio de envío de tu confianza. Dejamos el pedido embalado y listo para que lo pase a retirar el transporte que elijas, o lo retirás vos mismo por la fábrica.",
   },
   {
     pregunta: "¿El cartón es reciclable?",

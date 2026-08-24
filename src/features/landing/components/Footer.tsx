@@ -1,7 +1,7 @@
 import Image from "next/image"
-import { Clock, Mail, MapPin, Phone } from "lucide-react"
+import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react"
 
-import { EMPRESA } from "../data/contenido"
+import { EMPRESA, linkWhatsApp } from "../data/contenido"
 
 const LINKS = [
   { href: "/productos", label: "Catálogo" },
@@ -27,7 +27,7 @@ export function Footer() {
             className="h-9 w-auto self-start brightness-0 invert"
           />
           <p className="max-w-xs text-sm text-[#f5f1e1]/60">
-            {EMPRESA.tagline} en {EMPRESA.provincia}. Más de 30 años fabricando
+            {EMPRESA.tagline} en {EMPRESA.provincia}. Más de 50 años fabricando
             packaging resistente y prolijo.
           </p>
         </div>
@@ -55,12 +55,26 @@ export function Footer() {
               {EMPRESA.direccion}, {EMPRESA.ciudad}
             </li>
             <li className="flex items-start gap-2.5">
-              <Phone className="mt-0.5 size-4 shrink-0 text-acento" aria-hidden />
+              <MessageCircle
+                className="mt-0.5 size-4 shrink-0 text-acento"
+                aria-hidden
+              />
               <a
-                href={`tel:${EMPRESA.telefono.replace(/\s|-/g, "")}`}
+                href={linkWhatsApp("¡Hola! Quiero hacer una consulta.")}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transition-colors hover:text-acento"
               >
-                {EMPRESA.telefono}
+                WhatsApp {EMPRESA.telefono}
+              </a>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <Phone className="mt-0.5 size-4 shrink-0 text-acento" aria-hidden />
+              <a
+                href={`tel:+54${EMPRESA.telefonoFijo.replace(/\s|-/g, "")}`}
+                className="transition-colors hover:text-acento"
+              >
+                Fijo {EMPRESA.telefonoFijo}
               </a>
             </li>
             <li className="flex items-start gap-2.5">
