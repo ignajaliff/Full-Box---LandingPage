@@ -3,27 +3,41 @@ import Link from "next/link"
 import { ArrowRight, MessageCircle } from "lucide-react"
 
 import { Button } from "@/shared/components/ui/button"
-import { formatCurrency } from "@/lib/format-currency"
-import { getProductosDestacados } from "@/features/productos/queries"
-import { formatMedidas } from "@/features/productos/types"
 import { STATS, linkWhatsApp } from "../data/contenido"
 
-export async function Hero() {
-  const recomendadas = await getProductosDestacados(4)
-
+export function Hero() {
   return (
-    <section id="inicio" className="relative bg-[#f5f5f5] pb-20 md:pb-24">
-      {/*
+    <section
+      id="inicio"
+      /*
         Sin overflow-hidden: las animaciones slide-in desplazan los elementos
         fuera del borde y un recorte acá los cortaba al entrar.
-        El fondo iguala al del PNG (#f5f5f5) para que la foto no muestre su
-        borde recortado.
-      */}
-      <div className="mx-auto max-w-7xl px-5 pt-8 sm:px-6 md:pt-8">
+
+        El hero invierte la paleta: el amarillo es el fondo, no el detalle.
+        Sobre él nada puede ir en amarillo, así que los acentos pasan a
+        charcoal y los botones invierten el contraste.
+
+        Ocupa la pantalla menos la cabecera (que es sticky y sí ocupa lugar
+        en el flujo), así la sección siguiente queda justo fuera de la vista.
+        svh y no vh: en móvil vh cuenta la barra del navegador y empujaría
+        las credenciales fuera de la pantalla.
+        min-h y no h: si el contenido crece (texto más largo, zoom), la
+        sección se estira en vez de recortarlo.
+
+        El min-h solo se aplica desde 700px de alto (min-h-[700px] del
+        media query `sm` no sirve: mide ancho). Por debajo, la cabecera se
+        come 155px y el contenido no entra: forzar la altura solo lo
+        comprimiría, así que se deja fluir.
+      */
+      className="relative flex flex-col bg-acento [@media(min-height:700px)]:min-h-[calc(100svh-var(--altura-cabecera))]"
+    >
+      {/* flex-1 + justify-center: el bloque superior reparte el aire sobrante
+          y queda ópticamente centrado sin importar el alto de pantalla. */}
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 py-4 sm:px-6 md:py-8">
         <div className="grid items-center gap-6 md:grid-cols-[1fr_1.3fr] md:gap-10">
           {/* Columna izquierda — mensaje y acciones. */}
           <div className="relative z-10 flex flex-col items-center gap-4 text-center md:items-start md:gap-5 md:text-left">
-            <span className="animate-in fade-in slide-in-from-bottom-3 rounded-full bg-acento-soft px-3.5 py-1.5 text-[11px] font-medium text-acento duration-700 sm:px-4 sm:text-xs">
+            <span className="animate-in fade-in slide-in-from-bottom-3 rounded-full bg-foreground/10 px-3.5 py-1.5 text-[11px] font-medium text-foreground duration-700 sm:px-4 sm:text-xs">
               Antes <strong className="font-semibold">Cartonera Oeste</strong> · hoy{" "}
               <strong className="font-semibold">Full Box</strong>
             </span>
@@ -33,11 +47,12 @@ export async function Hero() {
               style={{ animationDelay: "80ms" }}
             >
               Tu próxima caja
-              <span className="block text-acento">empieza acá</span>
+              {/* Sobre amarillo el resalte lo da el blanco, no el acento. */}
+              <span className="block text-background">empieza acá</span>
             </h1>
 
             <p
-              className="max-w-sm animate-in fade-in slide-in-from-bottom-4 text-pretty text-[13px] leading-relaxed text-muted-foreground duration-700 sm:text-sm md:text-base"
+              className="max-w-sm animate-in fade-in slide-in-from-bottom-4 text-pretty text-[13px] leading-relaxed text-foreground/75 duration-700 sm:text-sm md:text-base"
               style={{ animationDelay: "160ms" }}
             >
               Más de 50 años fabricando packaging resistente y prolijo, con tu
@@ -52,7 +67,7 @@ export async function Hero() {
             >
               <Button
                 asChild
-                className="h-11 w-full bg-acento text-acento-foreground hover:bg-acento/90 sm:w-auto md:px-6 md:text-base"
+                className="h-11 w-full bg-foreground text-background hover:bg-foreground/90 sm:w-auto md:px-6 md:text-base"
               >
                 <a
                   href={linkWhatsApp("¡Hola! Quiero cotizar cajas a medida.")}
@@ -66,7 +81,7 @@ export async function Hero() {
               <Button
                 asChild
                 variant="outline"
-                className="h-11 w-full border-foreground/15 bg-transparent sm:w-auto md:px-6 md:text-base"
+                className="h-11 w-full border-foreground/30 bg-transparent hover:bg-foreground/5 sm:w-auto md:px-6 md:text-base"
               >
                 <Link href="/productos">
                   Ver catálogo
@@ -76,10 +91,14 @@ export async function Hero() {
             </div>
           </div>
 
-          {/* Foto de productos. El margen negativo la sangra a los bordes en
-              mobile; tiene que igualar al padding del contenedor. */}
+          {/*
+            La foto va en su propio recuadro, por encima del amarillo. El PNG
+            es opaco (trae su fondo claro quemado), así que en vez de fingir
+            transparencia se presenta como tarjeta: bordes redondeados y
+            sombra la despegan del fondo.
+          */}
           <div
-            className="-mx-5 animate-in fade-in zoom-in-95 duration-1000 sm:-mx-6 md:mx-0"
+            className="animate-in fade-in zoom-in-95 overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-xl ring-1 ring-foreground/10 duration-1000"
             style={{ animationDelay: "200ms" }}
           >
             <Image
@@ -96,109 +115,28 @@ export async function Hero() {
       </div>
 
       {/* Credenciales: cierran el bloque superior del hero. */}
-      <dl className="mt-2 border-y border-foreground/10 md:mt-0">
+      <dl className="border-t border-foreground/20">
         <div className="mx-auto grid max-w-7xl grid-cols-2 px-5 sm:px-6 md:grid-cols-4">
           {STATS.map((stat, i) => (
             <div
               key={stat.etiqueta}
-              className={`flex flex-col items-center gap-1 px-2 py-5 text-center md:px-4 ${
-                i > 0 ? "md:border-l md:border-foreground/10" : ""
-              } ${i % 2 === 1 ? "border-l border-foreground/10" : ""} ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-2.5 text-center md:gap-1 md:px-4 md:py-5 ${
+                i > 0 ? "md:border-l md:border-foreground/20" : ""
+              } ${i % 2 === 1 ? "border-l border-foreground/20" : ""} ${
                 /* En 2×2 la fila de abajo necesita su borde superior. */
-                i > 1 ? "border-t border-foreground/10 md:border-t-0" : ""
+                i > 1 ? "border-t border-foreground/20 md:border-t-0" : ""
               }`}
             >
-              <dt className="text-2xl font-bold tracking-tight md:text-3xl">
+              <dt className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
                 {stat.valor}
               </dt>
-              <dd className="text-[11px] leading-snug text-muted-foreground sm:text-xs md:text-sm">
+              <dd className="text-[11px] leading-snug text-foreground/70 sm:text-xs md:text-sm">
                 {stat.etiqueta}
               </dd>
             </div>
           ))}
         </div>
       </dl>
-
-      {/* Cajas recomendadas: cierran el hero y hacen de catálogo destacado. */}
-      {recomendadas.length > 0 && (
-        <div className="mx-auto mt-10 max-w-7xl px-5 sm:px-6 md:mt-16">
-          {/* La línea separa las credenciales de los productos. */}
-          <div className="mb-8 h-px bg-foreground/10 md:mb-12" />
-          <div className="mb-6 flex flex-col items-center gap-2 text-center md:mb-7 md:gap-2.5">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-acento md:text-xs">
-              Lo más vendido
-            </span>
-            <h2 className="text-balance text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-              Cajas recomendadas
-            </h2>
-          </div>
-
-          {/* Tarjetas contenidas: el grid no se estira a los 1280px del hero.
-              Dos columnas ya en mobile: a una sola quedaban enormes.
-              El pb-2 deja lugar a la sombra del hover, que se dibuja fuera
-              del borde de la tarjeta y si no quedaba recortada. */}
-          <ul className="mx-auto grid max-w-5xl grid-cols-2 gap-3 pb-2 sm:gap-4 lg:grid-cols-4">
-            {recomendadas.map((producto) => (
-              <li key={producto.id}>
-                <Link
-                  href={producto.slug ? `/productos/${producto.slug}` : "/productos"}
-                  className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card transition-all duration-300 hover:border-acento/40 hover:shadow-lg"
-                >
-                  {/* object-cover: la foto llena el cuadro en vez de flotar
-                      con aire alrededor. */}
-                  <span className="relative block aspect-square overflow-hidden bg-muted/40">
-                    <Image
-                      src={producto.imagen_url ?? "/producto-ejemplo.png"}
-                      alt=""
-                      width={600}
-                      height={600}
-                      sizes="(min-width: 1024px) 20vw, 50vw"
-                      className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </span>
-
-                  <span className="flex flex-1 flex-col gap-0.5 p-3 sm:p-3.5">
-                    <span className="text-xs font-semibold leading-snug sm:text-[13px]">
-                      {producto.nombre}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground sm:text-xs">
-                      {formatMedidas(producto)}
-                    </span>
-                    <span className="mt-auto flex items-center justify-between gap-2 pt-2.5 sm:pt-3">
-                      {producto.precio !== null ? (
-                        <span className="flex flex-col leading-tight">
-                          <span className="text-[10px] text-muted-foreground">
-                            desde
-                          </span>
-                          <span className="text-sm font-bold sm:text-[15px]">
-                            {formatCurrency(producto.precio)}
-                          </span>
-                        </span>
-                      ) : (
-                        <span className="text-xs font-medium text-muted-foreground sm:text-[13px]">
-                          Consultar
-                        </span>
-                      )}
-                      <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-acento text-acento-foreground transition-opacity group-hover:opacity-90 sm:size-8">
-                        <ArrowRight className="size-3.5" aria-hidden />
-                      </span>
-                    </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-8 flex justify-center">
-            <Button asChild variant="outline" className="border-foreground/15">
-              <Link href="/productos">
-                Ver todas las medidas existentes
-                <ArrowRight className="size-4" aria-hidden />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      )}
     </section>
   )
 }

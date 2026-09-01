@@ -6,7 +6,7 @@
 /*
  * Paleta de marca Full Box.
  *   Marrón kraft    #A27F6D — base, el cartón mismo
- *   Cartón tostado  #A97538 — acento, CTAs y highlights
+ *   Amarillo Full Box #FFD500 — acento, CTAs y highlights
  *   Marrón charcoal #333333 — texto
  *   Crema suave     #F5F1E1 — fondo cálido de sección
  *
@@ -15,6 +15,12 @@
  * Prohibido color hardcoded en componentes: usar tokens semánticos.
  */
 :root {
+  /*
+   * Alto de la cabecera fija. MedirCabecera lo sobreescribe con el valor
+   * real; este default cubre el primer render y el caso sin JS. Es la suma
+   * aproximada de las tres barras: anuncios + header + navegación.
+   */
+  --altura-cabecera: 152px;
   --radius: 0.625rem;
   --background: #ffffff;
   --foreground: #333333; /* charcoal */
@@ -25,11 +31,11 @@
   /* Kraft: color base de marca. */
   --primary: #a27f6d;
   --primary-foreground: #ffffff;
-  /* Cartón tostado: el acento que lleva la acción. Más oscuro que el kraft
-     base, para despegarse de él y contrastar sobre crema. */
-  --acento: #a97538;
-  --acento-foreground: #ffffff;
-  --acento-soft: #f2e8d9; /* tinte para badges y fondos suaves */
+  /* Amarillo Full Box: el acento que lleva la acción. Es un color claro,
+     así que su foreground es charcoal — blanco sobre él es ilegible (1.2:1). */
+  --acento: #ffd500;
+  --acento-foreground: #333333;
+  --acento-soft: #fff6cc; /* tinte para badges y fondos suaves */
   /* Crema: fondo cálido para alternar el ritmo de las secciones. */
   --crema: #f5f1e1;
   --crema-foreground: #333333;
@@ -58,9 +64,9 @@
   --popover-foreground: #f5f1e1;
   --primary: #c19d8a; /* kraft aclarado para contraste en dark */
   --primary-foreground: #262220;
-  --acento: #d09a52; /* cartón aclarado para contraste en dark */
+  --acento: #ffd500; /* el amarillo ya contrasta sobre el fondo oscuro */
   --acento-foreground: #262220;
-  --acento-soft: #3d3025;
+  --acento-soft: #40381a;
   --crema: #332e2b;
   --crema-foreground: #f5f1e1;
   --cardboard: #c19d8a;
@@ -118,6 +124,14 @@
 }
 
 @layer base {
+  /*
+   * Mobile: la navegación es hidden, pero el header principal envuelve
+   * a dos filas. Medido en Chrome a 390px: 32 + 123 = 155.
+   */
+  @media (width < 48rem) {
+    :root { --altura-cabecera: 155px; }
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

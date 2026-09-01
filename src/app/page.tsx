@@ -1,5 +1,6 @@
 import { Navbar } from "@/features/landing/components/Navbar"
 import { Hero } from "@/features/landing/components/Hero"
+import { CajasRecomendadas } from "@/features/landing/components/CajasRecomendadas"
 import { Fabrica } from "@/features/landing/components/Fabrica"
 import { Clientes } from "@/features/landing/components/Clientes"
 import { Faq } from "@/features/landing/components/Faq"
@@ -15,6 +16,7 @@ export default function HomePage() {
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <CajasRecomendadas />
         <Fabrica />
         <Clientes />
         <Faq />

@@ -9,9 +9,9 @@
   <!--
     F en cartón. Lomo vertical + brazo superior + brazo medio.
     El brazo medio se estira hasta x=34, donde arranca la B.
-    Tono aclarado respecto del acento: sobre charcoal el #A97538 se apaga.
+    Usa el acento tal cual: el amarillo ya resalta sobre el charcoal.
   -->
-  <g fill="#CF9A54">
+  <g fill="#FFD500">
     <rect x="13" y="12" width="7" height="27" />
     <rect x="13" y="12" width="20" height="7" />
     <rect x="13" y="24" width="21" height="7" />
