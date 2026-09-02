@@ -13,9 +13,10 @@ export function Hero() {
         Sin overflow-hidden: las animaciones slide-in desplazan los elementos
         fuera del borde y un recorte acá los cortaba al entrar.
 
-        El hero invierte la paleta: el amarillo es el fondo, no el detalle.
-        Sobre él nada puede ir en amarillo, así que los acentos pasan a
-        charcoal y los botones invierten el contraste.
+        El fondo es el patrón de isotipos de marca, en mosaico. El PNG (370×246)
+        se repite con background-repeat y el backgroundSize lo achica a 200px
+        de ancho: se reduce la baldosa, nunca se amplía, así no pixela.
+        Es un fondo claro, así que el texto encima va en charcoal.
 
         Ocupa la pantalla menos la cabecera (que es sticky y sí ocupa lugar
         en el flujo), así la sección siguiente queda justo fuera de la vista.
@@ -29,7 +30,12 @@ export function Hero() {
         come 155px y el contenido no entra: forzar la altura solo lo
         comprimiría, así que se deja fluir.
       */
-      className="relative flex flex-col bg-acento [@media(min-height:700px)]:min-h-[calc(100svh-var(--altura-cabecera))]"
+      className="relative flex flex-col bg-acento text-foreground [@media(min-height:700px)]:min-h-[calc(100svh-var(--altura-cabecera))]"
+      style={{
+        backgroundImage: "url('/hero-patron.png')",
+        backgroundRepeat: "repeat",
+        backgroundSize: "200px auto",
+      }}
     >
       {/* flex-1 + justify-center: el bloque superior reparte el aire sobrante
           y queda ópticamente centrado sin importar el alto de pantalla. */}
@@ -47,7 +53,7 @@ export function Hero() {
               style={{ animationDelay: "80ms" }}
             >
               Tu próxima caja
-              {/* Sobre amarillo el resalte lo da el blanco, no el acento. */}
+              {/* Sobre el patrón amarillo el resalte lo da el blanco. */}
               <span className="block text-background">empieza acá</span>
             </h1>
 
@@ -92,20 +98,18 @@ export function Hero() {
           </div>
 
           {/*
-            La foto va en su propio recuadro, por encima del amarillo. El PNG
-            es opaco (trae su fondo claro quemado), así que en vez de fingir
-            transparencia se presenta como tarjeta: bordes redondeados y
-            sombra la despegan del fondo.
+            El PNG tiene el fondo recortado (alpha), así que las cajas se
+            apoyan directamente sobre el patrón, sin tarjeta ni recuadro.
           */}
           <div
-            className="animate-in fade-in zoom-in-95 overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-xl ring-1 ring-foreground/10 duration-1000"
+            className="animate-in fade-in zoom-in-95 duration-1000"
             style={{ animationDelay: "200ms" }}
           >
             <Image
-              src="/nuevohero-productos.png"
-              alt="Cajas y packaging de cartón con la marca Full Box"
-              width={1389}
-              height={768}
+              src="/hero-cajas.png"
+              alt="Cajas de cartón de distintas medidas con la marca Full Box"
+              width={669}
+              height={373}
               priority
               sizes="(min-width: 768px) 60vw, 100vw"
               className="h-auto w-full"
@@ -114,17 +118,18 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Credenciales: cierran el bloque superior del hero. */}
-      <dl className="border-t border-foreground/20">
+      {/* Credenciales: cierran el hero sobre fondo blanco, que corta el
+          patrón y las despega del bloque de arriba. */}
+      <dl className="border-t border-foreground/10 bg-background">
         <div className="mx-auto grid max-w-7xl grid-cols-2 px-5 sm:px-6 md:grid-cols-4">
           {STATS.map((stat, i) => (
             <div
               key={stat.etiqueta}
               className={`flex flex-col items-center gap-0.5 px-2 py-2.5 text-center md:gap-1 md:px-4 md:py-5 ${
-                i > 0 ? "md:border-l md:border-foreground/20" : ""
-              } ${i % 2 === 1 ? "border-l border-foreground/20" : ""} ${
+                i > 0 ? "md:border-l md:border-foreground/10" : ""
+              } ${i % 2 === 1 ? "border-l border-foreground/10" : ""} ${
                 /* En 2×2 la fila de abajo necesita su borde superior. */
-                i > 1 ? "border-t border-foreground/20 md:border-t-0" : ""
+                i > 1 ? "border-t border-foreground/10 md:border-t-0" : ""
               }`}
             >
               <dt className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">

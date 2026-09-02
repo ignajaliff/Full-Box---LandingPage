@@ -28,13 +28,16 @@ export function HeaderPrincipal() {
     <div className="border-b bg-background">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-3.5 md:gap-8">
         <Link href="/" className="shrink-0" aria-label={EMPRESA.nombre}>
+          {/* El logotipo de marca es casi cuadrado (incluye el tagline bajo
+              la palabra), así que va más alto que el anterior apaisado para
+              que "Full Box" se lea al mismo tamaño óptico. */}
           <Image
-            src="/logogrisoscuro.png"
+            src="/logo-fullbox.png"
             alt={EMPRESA.nombre}
-            width={597}
-            height={294}
+            width={1200}
+            height={827}
             priority
-            className="h-9 w-auto md:h-10"
+            className="h-12 w-auto md:h-14"
           />
         </Link>
 

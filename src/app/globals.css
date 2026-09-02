@@ -5,10 +5,11 @@
 
 /*
  * Paleta de marca Full Box.
- *   Marrón kraft    #A27F6D — base, el cartón mismo
- *   Amarillo Full Box #FFD500 — acento, CTAs y highlights
- *   Marrón charcoal #333333 — texto
+ *   Amarillo Full Box #FFD500 — base de marca, CTAs y highlights
+ *   Marrón charcoal #333333 — texto y foco
  *   Crema suave     #F5F1E1 — fondo cálido de sección
+ *
+ * El kraft #A27F6D quedó fuera de la paleta: la marca es amarilla.
  *
  * El token del acento se llama `acento` (no por su color) para que cambiarlo
  * no obligue a renombrar clases en toda la app.
@@ -28,20 +29,25 @@
   --card-foreground: #333333;
   --popover: #ffffff;
   --popover-foreground: #333333;
-  /* Kraft: color base de marca. */
-  --primary: #a27f6d;
-  --primary-foreground: #ffffff;
+  /* Amarillo Full Box: color base de marca. Al ser claro, el texto encima
+     va en charcoal — blanco sobre él es ilegible (1.2:1). */
+  --primary: #ffd500;
+  --primary-foreground: #333333;
   /* Amarillo Full Box: el acento que lleva la acción. Es un color claro,
      así que su foreground es charcoal — blanco sobre él es ilegible (1.2:1). */
   --acento: #ffd500;
   --acento-foreground: #333333;
   --acento-soft: #fff6cc; /* tinte para badges y fondos suaves */
+  /* Azul petróleo: fondo del hero. Es oscuro, así que lo que va encima
+     se escribe en blanco — charcoal sobre él no llega a 3:1. */
+  --azul: #22819b;
+  --azul-foreground: #ffffff;
   /* Crema: fondo cálido para alternar el ritmo de las secciones. */
   --crema: #f5f1e1;
   --crema-foreground: #333333;
-  /* Alias de compatibilidad: `cardboard` ahora es el kraft de la paleta. */
-  --cardboard: #a27f6d;
-  --cardboard-foreground: #ffffff;
+  /* Alias de compatibilidad: `cardboard` sigue al amarillo de la paleta. */
+  --cardboard: #ffd500;
+  --cardboard-foreground: #333333;
   --secondary: #f5f1e1;
   --secondary-foreground: #333333;
   --muted: #f3efe6;
@@ -52,7 +58,9 @@
   --destructive-foreground: #ffffff;
   --border: #e6dfd0;
   --input: #e6dfd0;
-  --ring: #a27f6d;
+  /* Anillo de foco: charcoal y no el amarillo — sobre fondos claros el
+     amarillo casi no se ve y el foco de teclado tiene que ser visible. */
+  --ring: #333333;
 }
 
 .dark {
@@ -62,14 +70,16 @@
   --card-foreground: #f5f1e1;
   --popover: #332e2b;
   --popover-foreground: #f5f1e1;
-  --primary: #c19d8a; /* kraft aclarado para contraste en dark */
+  --primary: #ffd500; /* el amarillo ya contrasta sobre el fondo oscuro */
   --primary-foreground: #262220;
   --acento: #ffd500; /* el amarillo ya contrasta sobre el fondo oscuro */
   --acento-foreground: #262220;
   --acento-soft: #40381a;
+  --azul: #22819b; /* mismo azul: ya es oscuro, no necesita ajuste */
+  --azul-foreground: #ffffff;
   --crema: #332e2b;
   --crema-foreground: #f5f1e1;
-  --cardboard: #c19d8a;
+  --cardboard: #ffd500;
   --cardboard-foreground: #262220;
   --secondary: #3d3733;
   --secondary-foreground: #f5f1e1;
@@ -81,7 +91,7 @@
   --destructive-foreground: #f5f1e1;
   --border: #ffffff1a;
   --input: #ffffff26;
-  --ring: #c19d8a;
+  --ring: #ffd500; /* sobre el fondo oscuro el amarillo sí destaca */
 }
 
 @theme inline {
@@ -96,6 +106,8 @@
   --color-acento: var(--acento);
   --color-acento-foreground: var(--acento-foreground);
   --color-acento-soft: var(--acento-soft);
+  --color-azul: var(--azul);
+  --color-azul-foreground: var(--azul-foreground);
   --color-crema: var(--crema);
   --color-crema-foreground: var(--crema-foreground);
   --color-cardboard: var(--cardboard);
@@ -112,10 +124,11 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-poppins);
+  --font-sans: var(--font-fira);
   --font-mono: var(--font-geist-mono);
-  /* Poppins también para títulos: una sola familia en todo el sitio. */
-  --font-display: var(--font-poppins);
+  /* Fira Sans también para títulos: una sola familia en todo el sitio,
+     que cambia de peso (Bold en títulos, Regular en texto secundario). */
+  --font-display: var(--font-fira);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
