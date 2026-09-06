@@ -181,6 +181,41 @@
 }
 
 /*
+ * Filas de logos de clientes. Mismo truco que la marquesina de anuncios:
+ * la pista se duplica en el markup y se desplaza -50%, así la copia queda
+ * donde arrancó la original y el loop no tiene salto.
+ *
+ * La cinta NO frena en hover: el desplazamiento es continuo y el logo bajo
+ * el cursor se enciende igual mientras pasa.
+ *
+ * Hay una clase por sentido (`.logos-track-izq` / `.logos-track-der`). Hoy
+ * la sección usa una sola cinta hacia la izquierda; la otra queda
+ * disponible por si se vuelve a un bloque de dos filas cruzadas. La
+ * duración va por variable: si conviven dos cintas, tiempos iguales las
+ * sincronizan y el patrón se nota repetido.
+ */
+/* Hacia la izquierda: la pista avanza en negativo. */
+@keyframes logos-scroll-izq {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+/* Hacia la derecha: arranca corrida y vuelve a cero. */
+@keyframes logos-scroll-der {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.logos-track-izq {
+  animation: logos-scroll-izq var(--duracion, 45s) linear infinite;
+}
+.logos-track-der {
+  animation: logos-scroll-der var(--duracion, 55s) linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logos-track-izq,
+  .logos-track-der { animation: none; }
+}
+
+/*
  * Pantalla de carga: el logotipo se dibuja trazo por trazo. Corre UNA sola
  * vez (sin infinite) y se queda en el dibujo terminado — `backwards` oculta
  * cada trazo durante su espera y el final del keyframe lo deja completo.

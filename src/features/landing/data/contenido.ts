@@ -111,14 +111,38 @@ export const FAQ = [
   },
 ] as const
 
-/** Clientes (placeholder — reemplazar por logos reales). */
-export const CLIENTES_DEMO = [
-  "Bodega Los Andes",
-  "Olivícola Cuyo",
-  "Distribuidora Mendoza",
-  "Supermercados del Oeste",
-  "Frutas del Valle",
-  "Logística Andina",
-  "Conservas San Martín",
-  "Vinos Premium SA",
-] as const
+/**
+ * Clientes que confían en Full Box.
+ *
+ * `logo` es la ruta al archivo en /public. Mientras una marca no tenga el
+ * logo cargado se deja en null y la tarjeta cae al nombre en texto, con el
+ * mismo tamaño y tratamiento — así la fila no se rompe ni queda un hueco.
+ *
+ * Los logos de /clientes vienen teñidos de charcoal sobre transparente: los
+ * originales eran blancos (pensados para fondo oscuro) y sobre la tarjeta
+ * blanca no se veían.
+ *
+ * El de Proemio venía vertical (sello arriba, palabra abajo): recompuesto en
+ * horizontal, porque al limitar la altura de la tarjeta la versión apilada
+ * quedaba diminuta al lado de los demás.
+ *
+ * `escala` corrige el peso óptico de los logos que no son apaisados: la
+ * cinta limita la ALTURA, así que un logo cuadrado ocupa mucha más
+ * superficie que uno alargado con el mismo tope. Se omite salvo que haga
+ * falta compensarlo.
+ *
+ * TODO Full Box: falta el logo de Sagitario Piedras.
+ */
+export const CLIENTES = [
+  // JB es cuadrado: al limitar la altura se veía bastante más grande que
+  // el resto, que son marcas apaisadas.
+  { nombre: "Jean Bousquet", logo: "/clientes/jean-bousquet.png", escala: 0.7 },
+  { nombre: "Sagitario Piedras", logo: null },
+  { nombre: "R Cristal", logo: "/clientes/r-cristal.png" },
+  { nombre: "Portal del Viento", logo: "/clientes/portal-del-viento.png" },
+  { nombre: "Proemio", logo: "/clientes/proemio.png" },
+] as const satisfies readonly {
+  nombre: string
+  logo: string | null
+  escala?: number
+}[]

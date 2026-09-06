@@ -9,7 +9,7 @@ import { FAQ, linkWhatsApp } from "../data/contenido"
  */
 export function Faq() {
   return (
-    <section id="faq" className="bg-background">
+    <section id="faq" className="bg-crema">
       <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
         <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <div className="flex flex-col items-start gap-4">
