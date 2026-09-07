@@ -5,12 +5,11 @@ import { CLIENTES } from "../data/contenido"
 /**
  * Clientes en una cinta que se desplaza sola.
  *
- * Los logos van sueltos sobre el fondo, sin tarjeta: apagados (grises y a
- * media opacidad) y sólo el que está bajo el cursor se enciende. Es el
- * recurso habitual de las secciones "confían en nosotros" — el bloque se
- * lee como una textura y la atención la dirige el mouse.
+ * Los logos van sueltos sobre el fondo, sin tarjeta y siempre a plena
+ * visibilidad. Son marcas reales que respaldan a Full Box: atenuarlas
+ * las volvía decorativas y costaba reconocerlas mientras la cinta pasa.
  *
- * La lista se repite hasta llenar el ancho porque son cinco marcas: con una
+ * La lista se repite hasta llenar el ancho porque son pocas marcas: con una
  * sola pasada la pista era más angosta que la pantalla y el desplazamiento
  * del 50% dejaba un claro visible.
  */
@@ -107,7 +106,7 @@ type MarcaProps = {
 }
 
 /**
- * Un logo suelto, apagado por defecto y encendido en hover.
+ * Un logo suelto, siempre legible.
  *
  * El ancho fijo mantiene el ritmo de la cinta pareja: sin él, cada marca
  * ocuparía según el largo de su logo y el espaciado quedaría irregular.
@@ -125,12 +124,12 @@ function Marca({ nombre, logo, escala = 1 }: MarcaProps) {
           height={120}
           sizes="240px"
           style={{ maxHeight: `calc(var(--alto-logo) * ${escala})` }}
-          className="h-auto w-auto max-w-full object-contain opacity-40 grayscale transition-all duration-300 [--alto-logo:5rem] group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 md:[--alto-logo:6rem]"
+          className="h-auto w-auto max-w-full object-contain transition-transform duration-300 [--alto-logo:5rem] group-hover:scale-105 md:[--alto-logo:6rem]"
         />
       ) : (
         /* Sin archivo de logo todavía: el nombre ocupa su lugar con el
            mismo tratamiento, así la cinta no queda con un hueco. */
-        <span className="text-balance text-center text-base font-bold uppercase leading-tight tracking-wide text-muted-foreground/50 transition-colors duration-300 group-hover:text-foreground md:text-xl">
+        <span className="text-balance text-center text-base font-bold uppercase leading-tight tracking-wide text-foreground transition-transform duration-300 group-hover:scale-105 md:text-xl">
           {nombre}
         </span>
       )}

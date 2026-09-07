@@ -141,6 +141,7 @@ export const CLIENTES = [
   { nombre: "R Cristal", logo: "/clientes/r-cristal.png" },
   { nombre: "Portal del Viento", logo: "/clientes/portal-del-viento.png" },
   { nombre: "Proemio", logo: "/clientes/proemio.png" },
+  { nombre: "Nomeolvides", logo: "/clientes/nomeolvides.png" },
 ] as const satisfies readonly {
   nombre: string
   logo: string | null
