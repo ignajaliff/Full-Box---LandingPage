@@ -10,10 +10,138 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      clientes: {
+        Row: {
+          condicion_iva: string | null
+          created_at: string
+          cuit: string | null
+          direccion_entrega: string | null
+          email: string | null
+          id: string
+          razon_social: string
+          telefono: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          condicion_iva?: string | null
+          created_at?: string
+          cuit?: string | null
+          direccion_entrega?: string | null
+          email?: string | null
+          id?: string
+          razon_social: string
+          telefono?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          condicion_iva?: string | null
+          created_at?: string
+          cuit?: string | null
+          direccion_entrega?: string | null
+          email?: string | null
+          id?: string
+          razon_social?: string
+          telefono?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      cobros: {
+        Row: {
+          cliente_id: string
+          created_at: string
+          fecha: string
+          id: string
+          metodo: string
+          notas: string | null
+          nro_factura: string | null
+          numero: number
+          total: number
+          updated_at: string | null
+        }
+        Insert: {
+          cliente_id: string
+          created_at?: string
+          fecha?: string
+          id?: string
+          metodo: string
+          notas?: string | null
+          nro_factura?: string | null
+          numero?: never
+          total: number
+          updated_at?: string | null
+        }
+        Update: {
+          cliente_id?: string
+          created_at?: string
+          fecha?: string
+          id?: string
+          metodo?: string
+          notas?: string | null
+          nro_factura?: string | null
+          numero?: never
+          total?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cobros_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      items_remito: {
+        Row: {
+          cantidad: number
+          created_at: string
+          id: string
+          precio_unitario: number | null
+          producto_id: string
+          remito_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          cantidad: number
+          created_at?: string
+          id?: string
+          precio_unitario?: number | null
+          producto_id: string
+          remito_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          cantidad?: number
+          created_at?: string
+          id?: string
+          precio_unitario?: number | null
+          producto_id?: string
+          remito_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "items_remito_producto_id_fkey"
+            columns: ["producto_id"]
+            isOneToOne: false
+            referencedRelation: "productos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "items_remito_remito_id_fkey"
+            columns: ["remito_id"]
+            isOneToOne: false
+            referencedRelation: "remitos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       productos: {
         Row: {
           activo: boolean
@@ -36,6 +164,7 @@ export type Database = {
           precio: number | null
           slug: string | null
           tipo_carton: string | null
+          tramos_precio: Json
           unidad_minima: number
           updated_at: string | null
         }
@@ -60,6 +189,7 @@ export type Database = {
           precio?: number | null
           slug?: string | null
           tipo_carton?: string | null
+          tramos_precio?: Json
           unidad_minima?: number
           updated_at?: string | null
         }
@@ -84,10 +214,59 @@ export type Database = {
           precio?: number | null
           slug?: string | null
           tipo_carton?: string | null
+          tramos_precio?: Json
           unidad_minima?: number
           updated_at?: string | null
         }
         Relationships: []
+      }
+      remitos: {
+        Row: {
+          cliente_id: string
+          cobro_id: string | null
+          created_at: string
+          estado: string
+          id: string
+          notas: string | null
+          numero: number
+          updated_at: string | null
+        }
+        Insert: {
+          cliente_id: string
+          cobro_id?: string | null
+          created_at?: string
+          estado?: string
+          id?: string
+          notas?: string | null
+          numero?: never
+          updated_at?: string | null
+        }
+        Update: {
+          cliente_id?: string
+          cobro_id?: string | null
+          created_at?: string
+          estado?: string
+          id?: string
+          notas?: string | null
+          numero?: never
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "remitos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "remitos_cobro_id_fkey"
+            columns: ["cobro_id"]
+            isOneToOne: false
+            referencedRelation: "cobros"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -118,8 +297,35 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cobrar_remitos: {
+        Args: {
+          p_metodo: string
+          p_notas?: string
+          p_nro_factura?: string
+          p_precios: Json
+          p_remito_ids: string[]
+        }
+        Returns: string
+      }
+      crear_remito: {
+        Args: { p_cliente_id: string; p_items: Json; p_notas?: string }
+        Returns: string
+      }
+      editar_remito: {
+        Args: {
+          p_cliente_id: string
+          p_items: Json
+          p_notas?: string
+          p_remito_id: string
+        }
+        Returns: undefined
+      }
       fmt_cm: { Args: { v: number }; Returns: string }
       tiene_rol: { Args: { rol_requerido: string }; Returns: boolean }
+      tramos_precio_validos: {
+        Args: { tramos: Json; unidad_minima: number }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
@@ -138,12 +344,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -167,11 +373,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -192,11 +398,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -217,11 +423,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -234,11 +440,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

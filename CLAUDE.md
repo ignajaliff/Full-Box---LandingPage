@@ -97,7 +97,17 @@ Proyecto Supabase: **`full_box`** (id `bwjppaihfaxcertrzsbr`, región sa-east-1)
 **`productos`** — columnas:
 `id uuid pk, nombre text, medida text, slug text unique, categoria text,
 descripcion text, largo/ancho/alto numeric(6,1), precio numeric(12,2) null,
-imagen_url text, destacado bool, activo bool, created_at, updated_at`
+unidad_minima int, tramos_precio jsonb, tipo_carton text, plazo_entrega text,
+admite_impresion bool, imagen_url text, destacado bool, activo bool,
+created_at, updated_at`
+
+* **`tramos_precio`** (2026-09-11): hasta 4 tramos `{cantidad, precio}` — desde esa
+  cantidad, ese precio unitario. Los carga el sistema de gestión y la base los valida
+  (`tramos_precio_validos`: ≤ 4, cantidad entera > unidad_minima, creciente, precio ≥ 0).
+  Reemplazan a `desc_x100/x250/x500` (descuentos fijos en 100/250/500), que **siguen
+  existiendo con default 0 solo hasta que esta landing esté desplegada leyendo
+  `tramos_precio`**; después se borran desde el sistema (ver su
+  `supabase/tramos_precio.sql`, PASO 2).
 
 * **RLS**: `anon`+`authenticated` pueden SELECT solo `activo = true`
   (política `catalogo publico lee productos activos`). La escritura sigue
@@ -149,14 +159,25 @@ Registrar aquí lo que se salga del estándar.
 * **shadcn/ui**: componentes UI en `src/shared/components/ui/` (no en `@/components/ui`);
   alias configurados en `components.json`.
 * `next.config.ts`: `images.remotePatterns` apunta a `*.supabase.co` (Storage del catálogo).
+* **Tramos de precio desde `tramos_precio`** (2026-09-11): `getTramos()` en
+  `features/productos/types.ts` arma la lista con el precio base desde la unidad mínima y,
+  detrás, cada tramo cargado (validando la forma del Json con `leerTramosPrecio`, porque el
+  tipo generado es `Json` genérico). Devuelve la MISMA forma de antes (`desde`, `etiqueta`,
+  `precioUnitario`, `descuento`) para que `FichaCompra` no cambie; `descuento` ahora se calcula
+  como % de ahorro contra el precio base (antes venía de la base). Ya no lee `desc_x*`.
 
 ---
 
 ## Estado actual del desarrollo
 
-**Última sesión**: 2026-08-07
-**Próximo paso**: cargar las fotos reales por producto (`imagen_url`) y revisar los
-precios placeholder desde el sistema de gestión.
+**Última sesión**: 2026-09-11 — la ficha de producto lee los tramos de precio desde
+`productos.tramos_precio` (hasta 4 tramos cargados en el sistema de gestión) en vez de los
+tres descuentos fijos `desc_x*`. Tipos de Supabase regenerados (traen también remitos, cobros
+e items_remito, que la landing no usa). Sin commitear.
+**Próximo paso**: **desplegar esta versión** y recién después borrar `desc_x100/x250/x500`
+en la base (PASO 2 de `supabase/tramos_precio.sql` del sistema) — si se borran antes del
+deploy, la versión publicada muestra precios `NaN`. Luego: fotos reales por producto y revisar
+los precios/tramos desde el sistema de gestión.
 
 **Lo que está funcionando**:
 * Landing completa y responsive: Hero (a pantalla completa, foto real), catálogo
@@ -168,16 +189,17 @@ precios placeholder desde el sistema de gestión.
 * `tsc --noEmit` y `npm run build` pasan.
 
 **Lo que está pendiente**:
-* `/productos/[slug]` (detalle) — el DAL `getProductoBySlug()` ya está listo, falta la página.
 * Fotos reales por producto: hoy todas usan `/producto-ejemplo.png` como fallback.
 * Logos reales de clientes y datos de contacto reales (`features/landing/data/contenido.ts`).
 
 **Problemas conocidos o deuda técnica**:
 * **Precios placeholder**: los 5 productos tienen precios estimados por fórmula, no reales.
   Actualizar desde el sistema de gestión.
-* El sistema de gestión sólo escribe `nombre` + `medida`; los productos nuevos que cree
-  quedarán sin categoría/descripción/precio y **sin largo/ancho/alto** (no aparecerán en el
-  buscador por medidas ni en el cotizador hasta cargarlos).
+* Un producto **sin largo/ancho/alto** no aparece en el buscador por medidas ni en el
+  cotizador. El sistema de gestión ya permite cargar todo (dimensiones, precio, tramos,
+  foto), pero las dimensiones son opcionales al crear.
+* Los tramos migrados desde `desc_x*` eran los defaults de la tabla (8/15/22 %), no precios
+  pensados: conviene revisarlos producto por producto desde el sistema.
 * Advisors preexistentes (no introducidos por la landing): `tiene_rol` es SECURITY DEFINER
   ejecutable por `authenticated`, y falta activar leaked-password protection en Auth.
 

@@ -1,4 +1,4 @@
-import { type Database } from "@/integrations/supabase/types"
+import { type Database, type Json } from "@/integrations/supabase/types"
 
 /** Fila de la tabla `productos` tal como la devuelve Supabase. */
 export type Producto = Database["public"]["Tables"]["productos"]["Row"]
@@ -30,12 +30,40 @@ export type TramoPrecio = {
   desde: number
   etiqueta: string
   precioUnitario: number
+  /** % de ahorro respecto del precio base (0 en el tramo de la unidad mínima). */
   descuento: number
 }
 
+/** Como lo guarda el sistema de gestión en `productos.tramos_precio`. */
+type TramoCargado = { cantidad: number; precio: number }
+
 /**
- * Tramos de precio de un producto, según los descuentos cargados en la base.
- * Devuelve [] si el producto no tiene precio.
+ * `tramos_precio` llega como Json genérico: se valida la forma antes de
+ * usarlo (lo que no tenga {cantidad, precio} numéricos se descarta) y se
+ * devuelve ordenado por cantidad.
+ */
+function leerTramosPrecio(json: Json): TramoCargado[] {
+  if (!Array.isArray(json)) return []
+
+  const tramos: TramoCargado[] = []
+  for (const item of json) {
+    if (typeof item !== "object" || item === null || Array.isArray(item)) {
+      continue
+    }
+    const { cantidad, precio } = item
+    if (typeof cantidad === "number" && typeof precio === "number") {
+      tramos.push({ cantidad, precio })
+    }
+  }
+
+  return tramos.sort((a, b) => a.cantidad - b.cantidad)
+}
+
+/**
+ * Tramos de precio de un producto: el precio base desde la unidad mínima y,
+ * detrás, cada tramo que el sistema de gestión cargó en `tramos_precio`
+ * (hasta 4, «desde N unidades, precio unitario X»). Devuelve [] si el
+ * producto no tiene precio.
  */
 export function getTramos(p: Producto): TramoPrecio[] {
   if (p.precio === null) return []
@@ -43,21 +71,21 @@ export function getTramos(p: Producto): TramoPrecio[] {
   const min = p.unidad_minima
 
   const escalones = [
-    { desde: min, descuento: 0 },
-    { desde: 100, descuento: p.desc_x100 },
-    { desde: 250, descuento: p.desc_x250 },
-    { desde: 500, descuento: p.desc_x500 },
+    { desde: min, precio: base },
+    ...leerTramosPrecio(p.tramos_precio)
+      // La base ya lo exige, pero un tramo bajo el mínimo no tendría sentido.
+      .filter((t) => t.cantidad > min)
+      .map((t) => ({ desde: t.cantidad, precio: t.precio })),
   ]
 
-  return escalones
-    // Si la unidad mínima supera un escalón, ese escalón no aplica.
-    .filter((e, i) => i === 0 || e.desde > min)
-    .map((e, i, arr) => ({
-      desde: e.desde,
-      etiqueta: i === arr.length - 1 ? `${e.desde}+ u.` : `${e.desde} u.`,
-      descuento: e.descuento,
-      precioUnitario: Math.round((base * (100 - e.descuento)) / 100),
-    }))
+  return escalones.map((e, i, arr) => ({
+    desde: e.desde,
+    etiqueta: i === arr.length - 1 ? `${e.desde}+ u.` : `${e.desde} u.`,
+    precioUnitario: e.precio,
+    // Ahorro contra el precio base; nunca negativo por si un tramo lo supera.
+    descuento:
+      base > 0 ? Math.max(0, Math.round(((base - e.precio) / base) * 100)) : 0,
+  }))
 }
 
 /**
