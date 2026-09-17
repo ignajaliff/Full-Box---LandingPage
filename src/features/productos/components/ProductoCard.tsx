@@ -10,45 +10,49 @@ export function ProductoCard({ producto }: { producto: Producto }) {
 
   const contenido = (
     <>
-      <div className="relative flex aspect-square items-center justify-center bg-muted/40 p-4">
+      <div className="relative flex aspect-square items-center justify-center bg-muted/40 p-3 sm:p-4">
         <Image
           src={producto.imagen_url ?? "/producto-ejemplo.png"}
           alt={producto.nombre}
           width={600}
           height={600}
-          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          /* Dos columnas ya en mobile: cada tarjeta ocupa ~50vw en todos
+             los breakpoints salvo los más anchos. */
+          sizes="(min-width: 1024px) 25vw, 50vw"
           className="max-h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
         />
         {producto.categoria && (
-          <span className="absolute left-3 top-3 rounded-full bg-acento-soft px-2.5 py-1 text-[11px] font-semibold text-acento">
+          <span className="absolute left-2 top-2 rounded-full bg-acento-soft px-2 py-0.5 text-[10px] font-semibold text-acento sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[11px]">
             {producto.categoria}
           </span>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1.5 p-4">
-        <h3 className="text-sm font-semibold leading-snug">{producto.nombre}</h3>
-        <span className="text-xs text-muted-foreground">
+      <div className="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
+        <h3 className="text-[13px] font-semibold leading-snug sm:text-sm">
+          {producto.nombre}
+        </h3>
+        <span className="text-[11px] text-muted-foreground sm:text-xs">
           {formatMedidas(producto)}
         </span>
 
-        <div className="mt-auto flex items-center justify-between gap-2 pt-3">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-2.5 sm:pt-3">
           <span className="flex flex-col">
             {producto.precio !== null ? (
               <>
                 <span className="text-[10.5px] text-muted-foreground">desde</span>
-                <span className="text-base font-bold">
+                <span className="text-sm font-bold sm:text-base">
                   {formatCurrency(producto.precio)}
                 </span>
               </>
             ) : (
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="text-[13px] font-medium text-muted-foreground sm:text-sm">
                 Consultar
               </span>
             )}
           </span>
           {href && (
-            <span className="inline-flex h-9 items-center justify-center rounded-full bg-acento px-4 text-xs font-semibold text-acento-foreground transition-opacity group-hover:opacity-90">
+            <span className="inline-flex h-8 shrink-0 items-center justify-center rounded-full bg-acento px-3 text-xs font-semibold text-acento-foreground transition-opacity group-hover:opacity-90 sm:h-9 sm:px-4">
               Ver
             </span>
           )}

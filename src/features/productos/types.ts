@@ -18,6 +18,24 @@ export function tieneMedidas(p: Producto): p is ProductoConMedidas {
   return p.largo !== null && p.ancho !== null && p.alto !== null
 }
 
+/** Imagen que se muestra cuando el producto no tiene ninguna cargada. */
+export const IMAGEN_FALLBACK = "/producto-ejemplo.png"
+
+/**
+ * Todas las fotos del producto: la principal primero y después las de
+ * `imagenes_extra` (hasta 4, del bucket de Storage).
+ *
+ * Siempre devuelve al menos una entrada — si no hay ninguna cargada, el
+ * placeholder — así la galería nunca queda vacía.
+ */
+export function fotosDe(p: Producto): string[] {
+  const extra = p.imagenes_extra ?? []
+  const todas = [p.imagen_url, ...extra].filter(
+    (url): url is string => typeof url === "string" && url.trim() !== "",
+  )
+  return todas.length > 0 ? todas : [IMAGEN_FALLBACK]
+}
+
 /** "30 × 20 × 15 cm" — usa el texto de la base y cae a las dimensiones. */
 export function formatMedidas(p: Producto): string {
   if (p.medida?.trim()) return p.medida

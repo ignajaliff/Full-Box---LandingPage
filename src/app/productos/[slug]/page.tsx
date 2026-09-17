@@ -1,18 +1,18 @@
 import type { Metadata } from "next"
-import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { Navbar } from "@/features/landing/components/Navbar"
 import { Footer } from "@/features/landing/components/Footer"
 import { FichaCompra } from "@/features/productos/components/FichaCompra"
+import { GaleriaProducto } from "@/features/productos/components/GaleriaProducto"
 import { ProductoCard } from "@/features/productos/components/ProductoCard"
 import {
   getProductoBySlug,
   getProductoSlugs,
   getProductosSimilares,
 } from "@/features/productos/queries"
-import { formatMedidas } from "@/features/productos/types"
+import { fotosDe, formatMedidas } from "@/features/productos/types"
 import { PROCESO } from "@/features/landing/data/contenido"
 
 export const revalidate = 300
@@ -77,40 +77,8 @@ export default async function ProductoPage({ params }: Props) {
         </div>
 
         {/* Galería + info */}
-        <div className="mx-auto grid max-w-[1280px] items-start gap-8 px-6 pb-16 pt-6 md:px-7 lg:grid-cols-[1.1fr_1fr] lg:gap-11">
-          <div className="flex flex-col gap-3">
-            <div className="flex aspect-square items-center justify-center rounded-[20px] border bg-card p-8 md:p-10">
-              <Image
-                src={producto.imagen_url ?? "/producto-ejemplo.png"}
-                alt={producto.nombre}
-                width={900}
-                height={900}
-                priority
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="max-h-full w-auto object-contain"
-              />
-            </div>
-            {/* TODO Full Box: fotos adicionales por producto */}
-            <div className="grid grid-cols-4 gap-3">
-              <div className="flex aspect-square items-center justify-center rounded-[14px] border-2 border-acento bg-card p-3">
-                <Image
-                  src={producto.imagen_url ?? "/producto-ejemplo.png"}
-                  alt=""
-                  width={200}
-                  height={200}
-                  className="max-h-full w-auto object-contain"
-                />
-              </div>
-              {["foto lateral", "caja armada", "marca impresa"].map((t) => (
-                <div
-                  key={t}
-                  className="flex aspect-square items-center justify-center rounded-[14px] border bg-card p-2 text-center font-mono text-[10.5px] leading-tight text-muted-foreground/60"
-                >
-                  {t}
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="mx-auto grid max-w-[1280px] items-start gap-8 px-6 pb-16 pt-6 md:px-7 lg:grid-cols-[1fr_1fr] lg:gap-11">
+          <GaleriaProducto fotos={fotosDe(producto)} nombre={producto.nombre} />
 
           <div className="flex flex-col gap-[18px]">
             {producto.categoria && (
