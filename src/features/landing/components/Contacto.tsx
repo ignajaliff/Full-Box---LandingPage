@@ -1,7 +1,8 @@
 import { Clock, Mail, MapPin, MessageCircle, Navigation, Phone } from "lucide-react"
 
 import { Button } from "@/shared/components/ui/button"
-import { EMPRESA, linkWhatsApp } from "../data/contenido"
+import { IconoFacebook, IconoInstagram } from "./IconosRedes"
+import { EMPRESA, REDES, linkWhatsApp } from "../data/contenido"
 
 const DIRECCION_COMPLETA = `${EMPRESA.direccion}, ${EMPRESA.ciudad}, ${EMPRESA.provincia}`
 const MAPA_QUERY = encodeURIComponent(DIRECCION_COMPLETA)
@@ -56,6 +57,20 @@ export function Contacto() {
                 href={`mailto:${EMPRESA.email}`}
               />
               <ContactoItem icon={Clock} label="Horario" valor={EMPRESA.horario} />
+              <ContactoItem
+                icon={IconoInstagram}
+                label="Instagram"
+                valor={REDES.instagram.usuario}
+                href={REDES.instagram.url}
+                externo
+              />
+              <ContactoItem
+                icon={IconoFacebook}
+                label="Facebook"
+                valor={REDES.facebook.usuario}
+                href={REDES.facebook.url}
+                externo
+              />
             </ul>
 
             <div className="mt-2 flex flex-wrap gap-3">
@@ -104,7 +119,7 @@ function ContactoItem({
   href,
   externo = false,
 }: {
-  icon: typeof Phone
+  icon: React.ComponentType<{ className?: string }>
   label: string
   valor: string
   href?: string

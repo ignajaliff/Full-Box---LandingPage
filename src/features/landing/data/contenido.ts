@@ -16,9 +16,26 @@ export const EMPRESA = {
   whatsapp: "5492615333368",
   telefono: "2615333368",
   telefonoFijo: "2614235270",
-  email: "cartoneraoeste@hotmail.com",
+  email: "contacto@fullboxpack.com",
   direccion: "Montecaseros 2030",
   horario: "Lunes a viernes de 9 a 17 hs",
+} as const
+
+/**
+ * Redes de Full Box. `usuario` es lo que se muestra; `url` adónde lleva.
+ *
+ * El link de Facebook es el de "compartir" de la página, que es el que nos
+ * pasaron: redirige al perfil real.
+ */
+export const REDES = {
+  instagram: {
+    usuario: "@fullbox.pack",
+    url: "https://www.instagram.com/fullbox.pack/",
+  },
+  facebook: {
+    usuario: "Full Box",
+    url: "https://www.facebook.com/share/14tUwHRuUim/?mibextid=wwXIfr",
+  },
 } as const
 
 /** Arma un link a WhatsApp con mensaje pre-cargado. */

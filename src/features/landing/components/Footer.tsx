@@ -1,7 +1,8 @@
 import Image from "next/image"
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react"
 
-import { EMPRESA, linkWhatsApp } from "../data/contenido"
+import { IconoFacebook, IconoInstagram } from "./IconosRedes"
+import { EMPRESA, REDES, linkWhatsApp } from "../data/contenido"
 
 const LINKS = [
   { href: "/productos", label: "Catálogo" },
@@ -89,6 +90,28 @@ export function Footer() {
             <li className="flex items-start gap-2.5">
               <Clock className="mt-0.5 size-4 shrink-0 text-acento" aria-hidden />
               {EMPRESA.horario}
+            </li>
+            <li className="flex items-start gap-2.5">
+              <IconoInstagram className="mt-0.5 size-4 shrink-0 text-acento" />
+              <a
+                href={REDES.instagram.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-acento"
+              >
+                {REDES.instagram.usuario}
+              </a>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <IconoFacebook className="mt-0.5 size-4 shrink-0 text-acento" />
+              <a
+                href={REDES.facebook.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-acento"
+              >
+                Facebook
+              </a>
             </li>
           </ul>
         </div>
